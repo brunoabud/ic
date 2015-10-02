@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QMainWindow_Analysis</class>
+ <widget class="QMainWindow" name="QMainWindow_Analysis">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>890</width>
+    <height>614</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>890</width>
+    <height>614</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>890</width>
+    <height>614</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Ferramenta Visual de Análise Cinemática</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>249</width>
+      <height>588</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_4"/>
+   </widget>
+   <widget class="QTabWidget" name="tbwg_Analysis">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>871</width>
+      <height>571</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="tb_view">
+     <attribute name="title">
+      <string>Visualização</string>
+     </attribute>
+     <widget class="QGroupBox" name="groupbox_previewControl">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>436</y>
+        <width>851</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Controle de Visualização</string>
+      </property>
+      <widget class="QScrollBar" name="scrlbar_previewTime">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>50</y>
+         <width>731</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="tracking">
+        <bool>true</bool>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_previewPlayPause">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>11</x>
+         <y>30</y>
+         <width>91</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>91</width>
+         <height>61</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>91</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Play</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbl_previewTime">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>20</y>
+         <width>731</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0000000</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>851</width>
+        <height>421</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>18</pointsize>
+        <weight>75</weight>
+        <italic>false</italic>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="lineWidth">
+       <number>2</number>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inicie uma Nova Análise no menu &amp;quot;Análise&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tb_plots">
+     <attribute name="title">
+      <string>Gráficos</string>
+     </attribute>
+    </widget>
+    <widget class="QWidget" name="tb_tables">
+     <attribute name="title">
+      <string>Tabelas</string>
+     </attribute>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>890</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuAn_lise">
+    <property name="title">
+     <string>Análise</string>
+    </property>
+    <addaction name="actn_newAnalysis"/>
+    <addaction name="separator"/>
+    <addaction name="mn_Export"/>
+    <addaction name="separator"/>
+    <addaction name="mnExit"/>
+   </widget>
+   <widget class="QMenu" name="menuAjuda">
+    <property name="title">
+     <string>Ajuda</string>
+    </property>
+    <addaction name="mn_userManual"/>
+    <addaction name="separator"/>
+    <addaction name="mn_about"/>
+   </widget>
+   <addaction name="menuAn_lise"/>
+   <addaction name="menuAjuda"/>
+  </widget>
+  <action name="actn_newAnalysis">
+   <property name="text">
+    <string>Nova Análise</string>
+   </property>
+  </action>
+  <action name="mn_Export">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Exportar</string>
+   </property>
+  </action>
+  <action name="mn_userManual">
+   <property name="text">
+    <string>Manual do Usuário</string>
+   </property>
+  </action>
+  <action name="mn_about">
+   <property name="text">
+    <string>Sobre</string>
+   </property>
+  </action>
+  <action name="mnExit">
+   <property name="text">
+    <string>Sair</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

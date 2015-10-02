@@ -88,7 +88,6 @@ class Mov_track:
 	
 	#Para todo o processamento liberando o arquivo de video, camera e o que mais estiver sendo usado.
 	def stop(self):
-		print ("stopou")
 		self.config['input_type'] = 'nothing'
 					
 		self.config['frame_pos'] = 0
@@ -159,8 +158,12 @@ class Mov_track:
 
 		return ret, show_frame
 	def setFramePos(self, pos):
-		self.config['frame_pos'] = pos
-		self.cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, pos)
+		if pos < 0 or pos >= self.config['total_frames']:
+			return False
+		else:
+			self.config['frame_pos'] = pos
+			self.cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, pos)
+			return True
 
 	def setConfig(self, config, value):
 		self.config[config] = value
@@ -173,5 +176,4 @@ class Mov_track:
 
 	def getTotalFrames(self):
 		return self.config['total_frames']
-
 
