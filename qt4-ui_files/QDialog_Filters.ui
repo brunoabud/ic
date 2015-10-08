@@ -47,7 +47,7 @@
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
-     <widget class="QSlider" name="horizontalSlider">
+     <widget class="QSlider" name="sldr_preBlur">
       <property name="minimum">
        <number>1</number>
       </property>
@@ -60,7 +60,7 @@
      </widget>
     </item>
     <item row="11" column="0" colspan="2">
-     <widget class="QSlider" name="horizontalSlider_4">
+     <widget class="QSlider" name="sldr_frameSkip">
       <property name="minimum">
        <number>0</number>
       </property>
@@ -82,7 +82,7 @@
      </widget>
     </item>
     <item row="5" column="0" colspan="2">
-     <widget class="QSlider" name="horizontalSlider_3">
+     <widget class="QSlider" name="sldr_preThreshold">
       <property name="minimum">
        <number>3</number>
       </property>
@@ -150,7 +150,7 @@
      </widget>
     </item>
     <item row="3" column="0" colspan="2">
-     <widget class="QSlider" name="horizontalSlider_2">
+     <widget class="QSlider" name="sldr_postBlur">
       <property name="minimum">
        <number>1</number>
       </property>
@@ -177,7 +177,7 @@
      </widget>
     </item>
     <item row="8" column="0" colspan="2">
-     <widget class="QSlider" name="horizontalSlider_5">
+     <widget class="QSlider" name="sldr_postThreshold">
       <property name="minimum">
        <number>3</number>
       </property>
@@ -201,7 +201,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>horizontalSlider</sender>
+   <sender>sldr_preBlur</sender>
    <signal>valueChanged(int)</signal>
    <receiver>label_5</receiver>
    <slot>setNum(int)</slot>
@@ -217,7 +217,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>horizontalSlider_2</sender>
+   <sender>sldr_postBlur</sender>
    <signal>valueChanged(int)</signal>
    <receiver>label_6</receiver>
    <slot>setNum(int)</slot>
@@ -233,7 +233,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>horizontalSlider_3</sender>
+   <sender>sldr_preThreshold</sender>
    <signal>valueChanged(int)</signal>
    <receiver>label_7</receiver>
    <slot>setNum(int)</slot>
@@ -249,7 +249,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>horizontalSlider_5</sender>
+   <sender>sldr_postThreshold</sender>
    <signal>valueChanged(int)</signal>
    <receiver>label_8</receiver>
    <slot>setNum(int)</slot>
@@ -265,7 +265,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>horizontalSlider_4</sender>
+   <sender>sldr_frameSkip</sender>
    <signal>valueChanged(int)</signal>
    <receiver>label_10</receiver>
    <slot>setNum(int)</slot>

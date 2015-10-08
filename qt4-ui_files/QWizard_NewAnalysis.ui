@@ -347,7 +347,7 @@
        </widget>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="QLabel" name="label_16">
+       <widget class="QLabel" name="lbl_lineLength">
         <property name="text">
          <string>0</string>
         </property>
@@ -401,7 +401,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_5">
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="pb_filters">
         <property name="text">
          <string>Opções de Filtro</string>
         </property>
@@ -603,12 +603,8 @@
       </item>
      </layout>
     </widget>
-    <zorder>label_3</zorder>
-    <zorder>frame_5</zorder>
-    <zorder>frame_6</zorder>
-    <zorder>frame_4</zorder>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -623,26 +619,26 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QGraphicsView_LineMarker</class>
-   <extends>QGraphicsView</extends>
-   <header>QGraphicsView_LineMarker.QGraphicsView_LineMarker</header>
-  </customwidget>
-  <customwidget>
    <class>QWizardPage_VideoInput</class>
    <extends>QWizardPage</extends>
-   <header>QWizardPage_VideoInput</header>
+   <header location="global">QWizardPage_VideoInput</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QWizardPage_DimensionalRatio</class>
    <extends>QWizardPage</extends>
-   <header>QWizardPage_DimensionalRatio</header>
+   <header location="global">QWizardPage_DimensionalRatio</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QLabel_Color</class>
    <extends>QLabel</extends>
-   <header>QLabel_Color</header>
+   <header location="global">QLabel_Color</header>
+  </customwidget>
+  <customwidget>
+   <class>QGraphicsView_LineMarker</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">QGraphicsView_LineMarker</header>
   </customwidget>
  </customwidgets>
  <resources/>

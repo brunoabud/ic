@@ -5,10 +5,15 @@ from matplotlib.patches import Rectangle
 import cv2
 import math
 
+
 class QGraphicsView_LineMarker(QtGui.QGraphicsView):
+
+	lineChanged = QtCore.pyqtSignal(float)
+
 	def __init__(self, parent):
 		super(QtGui.QGraphicsView, self).__init__(parent)
 		self.createScene()
+		
 
 	def createScene(self):
 		#Variáveis de Controle
@@ -109,6 +114,7 @@ class QGraphicsView_LineMarker(QtGui.QGraphicsView):
 
 		if event.button() == QtCore.Qt.LeftButton and self.drawing:
 			self.drawing = False
+			self.lineChanged.emit(self.getLineLength())
 
 	def mouseMoveEvent(self, event):		
 		if self.zooming == True:

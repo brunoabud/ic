@@ -3,6 +3,8 @@ from PyQt4 import QtGui, QtCore
 from MovAnalysis import Mov_track
 import QGraphicsView_LineMarker
 import unicodedata
+import QDialog_Filters
+import math
 
 def is_number(s):
     try:
@@ -42,7 +44,13 @@ class QWizardPage_DimensionalRatio(QtGui.QWizardPage):
 		if not self.has_wiz_add_me:
 			return False
 
-		return False
+		if self.wiz_ui.lbl_lineLength.text() == '0':
+			return False
+
+		if not is_number(self.wiz_ui.le_realLength.text()):
+			return False
+
+		return True
 
 	def initializePage(self):
 		if not self.has_wiz_add_me:
@@ -79,6 +87,10 @@ class QWizardPage_DimensionalRatio(QtGui.QWizardPage):
 				self.wiz_ui.tckbar_frame.setValue(self.movTrack.getFramePos())
 				self.wiz_ui.tckbar_frame.setMaximum(self.movTrack.getTotalFrames())
 
+	def pb_filters_clicked(self, checked):
+		dialog = QDialog_Filters.QDialog_Filters(self)
+		dialog.getFilters()
+
 	def connectSignals(self):
 		self.wiz_ui.pb_holdFrame.toggled.connect(self.pb_holdFrame_toggled)
 		self.wiz_ui.tckbar_frame.valueChanged.connect(self.tckbar_frame_valueChanged)
@@ -87,7 +99,8 @@ class QWizardPage_DimensionalRatio(QtGui.QWizardPage):
 		self.wiz_ui.sldr_Green.valueChanged.connect(self.lineColorChanged)
 		self.wiz_ui.sldr_Blue.valueChanged.connect(self.lineColorChanged)
 		self.wiz_ui.le_realLength.textChanged.connect(self.le_realLength_textChanged)
-
+		self.wiz_ui.pb_filters.clicked.connect(self.pb_filters_clicked)
+		self.wiz_ui.gv_lineMarker.lineChanged.connect(self.gv_lineMarker_lineChanged)
 		palette = self.wiz_ui.le_realLength.palette()
 		palette.setColor(QtGui.QPalette.Base, QtGui.QColor(255, 0, 0))
 
@@ -98,8 +111,11 @@ class QWizardPage_DimensionalRatio(QtGui.QWizardPage):
 
 		self.wiz_ui.lblColor.setAlignment(QtCore.Qt.AlignHCenter)
 
+	def gv_lineMarker_lineChanged(self, value):
+		self.wiz_ui.lbl_lineLength.setText(str(  math.ceil(value)  ))
+		self.completeChanged.emit()
+
 	def le_realLength_textChanged(self, text):
-		print "Calling me"
 		if is_number(text):
 			palette = self.wiz_ui.le_realLength.palette()
 			palette.setColor(QtGui.QPalette.Base, QtGui.QColor(0, 255, 0))
@@ -108,6 +124,7 @@ class QWizardPage_DimensionalRatio(QtGui.QWizardPage):
 			palette = self.wiz_ui.le_realLength.palette()
 			palette.setColor(QtGui.QPalette.Base, QtGui.QColor(255, 0, 0))
 			self.wiz_ui.le_realLength.setPalette(palette)
+		self.completeChanged.emit()
 
 	def chooseLineColor(self, checked):
 		color = QtGui.QColorDialog.getColor(QtGui.QColor(self.wiz_ui.sldr_R.value(), self.wiz_ui.sldr_G.value(), self.wiz_ui.sldr_B.value()), self,

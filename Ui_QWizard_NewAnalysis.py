@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file './qt4-ui_files/QWizard_NewAnalysis.ui'
 #
-# Created: Thu Oct  1 21:47:09 2015
+# Created: Wed Oct  7 22:25:03 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -148,9 +148,9 @@ class Ui_QWizard_NewAnalysis(object):
         self.label_14 = QtGui.QLabel(self.frame_5)
         self.label_14.setObjectName(_fromUtf8("label_14"))
         self.verticalLayout_4.addWidget(self.label_14)
-        self.label_16 = QtGui.QLabel(self.frame_5)
-        self.label_16.setObjectName(_fromUtf8("label_16"))
-        self.verticalLayout_4.addWidget(self.label_16)
+        self.lbl_lineLength = QtGui.QLabel(self.frame_5)
+        self.lbl_lineLength.setObjectName(_fromUtf8("lbl_lineLength"))
+        self.verticalLayout_4.addWidget(self.lbl_lineLength)
         self.label_15 = QtGui.QLabel(self.frame_5)
         self.label_15.setObjectName(_fromUtf8("label_15"))
         self.verticalLayout_4.addWidget(self.label_15)
@@ -167,9 +167,9 @@ class Ui_QWizard_NewAnalysis(object):
         self.frame_6.setObjectName(_fromUtf8("frame_6"))
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.frame_6)
         self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
-        self.pushButton = QtGui.QPushButton(self.frame_6)
-        self.pushButton.setObjectName(_fromUtf8("pushButton"))
-        self.verticalLayout_5.addWidget(self.pushButton)
+        self.pb_filters = QtGui.QPushButton(self.frame_6)
+        self.pb_filters.setObjectName(_fromUtf8("pb_filters"))
+        self.verticalLayout_5.addWidget(self.pb_filters)
         self.frame_4 = QtGui.QFrame(self.frame_2)
         self.frame_4.setGeometry(QtCore.QRect(10, 10, 307, 111))
         self.frame_4.setMinimumSize(QtCore.QSize(0, 0))
@@ -230,10 +230,10 @@ class Ui_QWizard_NewAnalysis(object):
         self.lblColor.setObjectName(_fromUtf8("lblColor"))
         self.gridLayout_5.addWidget(self.lblColor, 0, 1, 1, 1, QtCore.Qt.AlignHCenter)
         self.verticalLayout_3.addWidget(self.frame_3)
-        self.widget = QtGui.QWidget(self.wzdp_dimensionalRatio)
-        self.widget.setGeometry(QtCore.QRect(0, 0, 2, 2))
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.verticalLayout_2 = QtGui.QVBoxLayout(self.widget)
+        self.layoutWidget = QtGui.QWidget(self.wzdp_dimensionalRatio)
+        self.layoutWidget.setGeometry(QtCore.QRect(0, 0, 2, 2))
+        self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_2.setMargin(0)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         QWizard_NewAnalysis.addPage(self.wzdp_dimensionalRatio)
@@ -252,9 +252,9 @@ class Ui_QWizard_NewAnalysis(object):
         self.pb_holdFrame.setText(_translate("QWizard_NewAnalysis", "Congelar Frame Atual", None))
         self.label_10.setText(_translate("QWizard_NewAnalysis", "Traçe uma linha de dimensões conhecidas na imagem utilizando o botão esquerdo. A roda do mouse e o botão direito podem ser utilizadas para alterar o zoom.", None))
         self.label_14.setText(_translate("QWizard_NewAnalysis", "Dimensão da linha em pixels:", None))
-        self.label_16.setText(_translate("QWizard_NewAnalysis", "0", None))
+        self.lbl_lineLength.setText(_translate("QWizard_NewAnalysis", "0", None))
         self.label_15.setText(_translate("QWizard_NewAnalysis", "Dimensão real da linha em cm:", None))
-        self.pushButton.setText(_translate("QWizard_NewAnalysis", "Opções de Filtro", None))
+        self.pb_filters.setText(_translate("QWizard_NewAnalysis", "Opções de Filtro", None))
         self.label_5.setText(_translate("QWizard_NewAnalysis", "R", None))
         self.label_12.setText(_translate("QWizard_NewAnalysis", "B", None))
         self.label_13.setText(_translate("QWizard_NewAnalysis", "G", None))
