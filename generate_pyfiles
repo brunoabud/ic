@@ -1,2 +1,5 @@
-pyuic4 ./qt4-ui_files/QMainWindow_Analysis.ui -o ./QMainWindow_Analysis/Ui_QMainWindow_Analysis.py
-pyuic4 ./qt4-ui_files/QWizard_NewAnalysis.ui -o ./QMainWindow_Analysis/QWizard_NewAnalysis/Ui_QWizard_NewAnalysis.py
+pyuic4 ./qt4-ui_files/QMainWindow_Analysis.ui -o ./Ui_QMainWindow_Analysis.py
+pyuic4 ./qt4-ui_files/QWizard_NewAnalysis.ui -o ./Ui_QWizard_NewAnalysis.py
+pyuic4 ./qt4-ui_files/QDialog_Filters.ui -o ./Ui_QDialog_Filters.py
+
+

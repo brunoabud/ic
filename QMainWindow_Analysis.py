@@ -1,7 +1,7 @@
 #coding: latin-1
 from PyQt4 import QtCore, QtGui
 from Ui_QMainWindow_Analysis import Ui_QMainWindow_Analysis
-from QWizard_NewAnalysis import QWizard_NewAnalysis
+import QWizard_NewAnalysis
 
 class QMainWindow_Analysis(QtGui.QMainWindow):
 	def __init__(self, parent = None):

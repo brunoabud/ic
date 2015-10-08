@@ -259,7 +259,7 @@ class Ui_QWizard_NewAnalysis(object):
         self.label_12.setText(_translate("QWizard_NewAnalysis", "B", None))
         self.label_13.setText(_translate("QWizard_NewAnalysis", "G", None))
 
-from QGraphicsView_LineMarker.QGraphicsView_LineMarker import QGraphicsView_LineMarker
+from QGraphicsView_LineMarker import QGraphicsView_LineMarker
 from QWizardPage_DimensionalRatio import QWizardPage_DimensionalRatio
 from QWizardPage_VideoInput import QWizardPage_VideoInput
 from QLabel_Color import QLabel_Color

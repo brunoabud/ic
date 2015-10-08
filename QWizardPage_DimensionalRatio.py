@@ -1,7 +1,7 @@
 #coding: utf-8
 from PyQt4 import QtGui, QtCore
-import Mov_track
-import QGraphicsView_LineMarker.QGraphicsView_LineMarker
+from MovAnalysis import Mov_track
+import QGraphicsView_LineMarker
 import unicodedata
 
 def is_number(s):

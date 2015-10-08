@@ -2,8 +2,9 @@
 #Bibliotecas
 from PyQt4 import QtGui, QtCore
 import sys
+
 #Interface Gráficas
-from QMainWindow_Analysis import QMainWindow_Analysis
+import QMainWindow_Analysis
 
 #Inicialização da janela principal
 app = QtGui.QApplication(sys.argv)
