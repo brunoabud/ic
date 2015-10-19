@@ -1,0 +1,5 @@
+preThreshold 445
+postBlur 9
+postThreshold 15
+preBlur 9
+frameSkip 0

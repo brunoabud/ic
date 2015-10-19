@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file './qt4-ui_files/QMainWindow_Analysis.ui'
 #
-# Created: Wed Oct  7 22:25:02 2015
+# Created: Sun Oct 18 23:49:32 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -83,10 +83,47 @@ class Ui_QMainWindow_Analysis(object):
         self.tbwg_Analysis.addTab(self.tb_view, _fromUtf8(""))
         self.tb_plots = QtGui.QWidget()
         self.tb_plots.setObjectName(_fromUtf8("tb_plots"))
+        self.toolBox = QtGui.QToolBox(self.tb_plots)
+        self.toolBox.setGeometry(QtCore.QRect(0, 0, 210, 531))
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.toolBox.sizePolicy().hasHeightForWidth())
+        self.toolBox.setSizePolicy(sizePolicy)
+        self.toolBox.setObjectName(_fromUtf8("toolBox"))
+        self.page = QtGui.QWidget()
+        self.page.setGeometry(QtCore.QRect(0, 0, 210, 438))
+        self.page.setObjectName(_fromUtf8("page"))
+        self.comboBox_3 = QtGui.QComboBox(self.page)
+        self.comboBox_3.setGeometry(QtCore.QRect(10, 0, 161, 23))
+        self.comboBox_3.setObjectName(_fromUtf8("comboBox_3"))
+        self.comboBox_3.addItem(_fromUtf8(""))
+        self.comboBox_3.addItem(_fromUtf8(""))
+        self.comboBox_3.addItem(_fromUtf8(""))
+        self.toolBox.addItem(self.page, _fromUtf8(""))
+        self.page_2 = QtGui.QWidget()
+        self.page_2.setGeometry(QtCore.QRect(0, 0, 211, 438))
+        self.page_2.setObjectName(_fromUtf8("page_2"))
+        self.comboBox_2 = QtGui.QComboBox(self.page_2)
+        self.comboBox_2.setGeometry(QtCore.QRect(10, 0, 161, 23))
+        self.comboBox_2.setObjectName(_fromUtf8("comboBox_2"))
+        self.comboBox_2.addItem(_fromUtf8(""))
+        self.comboBox_2.addItem(_fromUtf8(""))
+        self.comboBox_2.addItem(_fromUtf8(""))
+        self.toolBox.addItem(self.page_2, _fromUtf8(""))
+        self.page_3 = QtGui.QWidget()
+        self.page_3.setObjectName(_fromUtf8("page_3"))
+        self.comboBox = QtGui.QComboBox(self.page_3)
+        self.comboBox.setGeometry(QtCore.QRect(10, 0, 161, 23))
+        self.comboBox.setObjectName(_fromUtf8("comboBox"))
+        self.comboBox.addItem(_fromUtf8(""))
+        self.comboBox.addItem(_fromUtf8(""))
+        self.comboBox.addItem(_fromUtf8(""))
+        self.toolBox.addItem(self.page_3, _fromUtf8(""))
+        self.wdgt_plots = QWidget_Plot(self.tb_plots)
+        self.wdgt_plots.setGeometry(QtCore.QRect(215, 5, 648, 533))
+        self.wdgt_plots.setObjectName(_fromUtf8("wdgt_plots"))
         self.tbwg_Analysis.addTab(self.tb_plots, _fromUtf8(""))
-        self.tb_tables = QtGui.QWidget()
-        self.tb_tables.setObjectName(_fromUtf8("tb_tables"))
-        self.tbwg_Analysis.addTab(self.tb_tables, _fromUtf8(""))
         QMainWindow_Analysis.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(QMainWindow_Analysis)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 890, 27))
@@ -120,6 +157,7 @@ class Ui_QMainWindow_Analysis(object):
 
         self.retranslateUi(QMainWindow_Analysis)
         self.tbwg_Analysis.setCurrentIndex(0)
+        self.toolBox.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(QMainWindow_Analysis)
 
     def retranslateUi(self, QMainWindow_Analysis):
@@ -129,8 +167,19 @@ class Ui_QMainWindow_Analysis(object):
         self.lbl_previewTime.setText(_translate("QMainWindow_Analysis", "0000000", None))
         self.label.setText(_translate("QMainWindow_Analysis", "<html><head/><body><p>Inicie uma Nova Análise no menu &quot;Análise&quot;</p></body></html>", None))
         self.tbwg_Analysis.setTabText(self.tbwg_Analysis.indexOf(self.tb_view), _translate("QMainWindow_Analysis", "Visualização", None))
+        self.comboBox_3.setItemText(0, _translate("QMainWindow_Analysis", "Vertical", None))
+        self.comboBox_3.setItemText(1, _translate("QMainWindow_Analysis", "Horizontal", None))
+        self.comboBox_3.setItemText(2, _translate("QMainWindow_Analysis", "Vertical + Horizontal", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page), _translate("QMainWindow_Analysis", "Aceleração", None))
+        self.comboBox_2.setItemText(0, _translate("QMainWindow_Analysis", "Vertical", None))
+        self.comboBox_2.setItemText(1, _translate("QMainWindow_Analysis", "Horizontal", None))
+        self.comboBox_2.setItemText(2, _translate("QMainWindow_Analysis", "Vertical + Horizontal", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_2), _translate("QMainWindow_Analysis", "Velocidade", None))
+        self.comboBox.setItemText(0, _translate("QMainWindow_Analysis", "Vertical", None))
+        self.comboBox.setItemText(1, _translate("QMainWindow_Analysis", "Horizontal", None))
+        self.comboBox.setItemText(2, _translate("QMainWindow_Analysis", "Vertical + Horizontal", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_3), _translate("QMainWindow_Analysis", "Posição", None))
         self.tbwg_Analysis.setTabText(self.tbwg_Analysis.indexOf(self.tb_plots), _translate("QMainWindow_Analysis", "Gráficos", None))
-        self.tbwg_Analysis.setTabText(self.tbwg_Analysis.indexOf(self.tb_tables), _translate("QMainWindow_Analysis", "Tabelas", None))
         self.menuAn_lise.setTitle(_translate("QMainWindow_Analysis", "Análise", None))
         self.menuAjuda.setTitle(_translate("QMainWindow_Analysis", "Ajuda", None))
         self.actn_newAnalysis.setText(_translate("QMainWindow_Analysis", "Nova Análise", None))
@@ -139,3 +188,4 @@ class Ui_QMainWindow_Analysis(object):
         self.mn_about.setText(_translate("QMainWindow_Analysis", "Sobre", None))
         self.mnExit.setText(_translate("QMainWindow_Analysis", "Sair", None))
 
+from QWidget_Plot import QWidget_Plot

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file './qt4-ui_files/QWizard_NewAnalysis.ui'
 #
-# Created: Wed Oct  7 22:25:03 2015
+# Created: Sun Oct 18 23:49:32 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!

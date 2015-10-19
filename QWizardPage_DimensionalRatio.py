@@ -5,6 +5,7 @@ import QGraphicsView_LineMarker
 import unicodedata
 import QDialog_Filters
 import math
+from MovAnalysis import Analysis
 
 def is_number(s):
     try:
@@ -153,10 +154,15 @@ class QWizardPage_DimensionalRatio(QtGui.QWizardPage):
 			self.preview_timer.start(65)
 
 	def validatePage(self):
+		self.analysis = Analysis.Analysis(self.movTrack)
+		self.analysis.analyze()
 		self.movTrack.stop()
-
+		print 'analisado' 
 		return True
 
 	def cleanupPage(self):
 		self.movTrack.stop()
 		self.wiz_ui.gv_lineMarker.resetView()
+
+	def __del__(self):
+		pass

@@ -18,6 +18,6 @@ class QMainWindow_Analysis(QtGui.QMainWindow):
 	def actn_newAnalysis_triggered(self, checked):
 		wizard_newAnalysis = QWizard_NewAnalysis.QWizard_NewAnalysis(self)
 		wizard_newAnalysis.show()
-
+		
 	def connectActions(self):
 		self.ui.actn_newAnalysis.triggered.connect(self.actn_newAnalysis_triggered)
