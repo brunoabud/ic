@@ -1,5 +1,6 @@
-preThreshold 445
-postBlur 9
-postThreshold 15
-preBlur 9
+preBlur 3
+dilateKernelSize 4
+postBlur 3
+threshC 8
 frameSkip 0
+preThreshold 13

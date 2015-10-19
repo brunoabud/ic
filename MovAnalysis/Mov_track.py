@@ -25,6 +25,7 @@ class Mov_track:
 		self.config['frame_pos'] = 0				#Posicao atual do frame
 		self.config['total_frames'] = 0				#Numero de frames. Para Camera sempre sera 0
 		self.buffer = Queue.Queue()
+		self.current_frame = None
 	#Incializa o buffer que ira manter sempre os ultimos (frame_skip + 2) frames carregados. Isto e necessario para evitar
 	#a utilizacao das funcoes do opencv para mudar a posicao dos frames que e muito lenta
 	def startBuffer(self):
@@ -106,7 +107,7 @@ class Mov_track:
 		ret, frame = self.cap.read()
 		if ret == True:
 			self.config['frame_pos'] += 1
-
+			self.current_frame = frame
 		return ret, frame
 
 	def processNextFrame(self):
@@ -147,16 +148,20 @@ class Mov_track:
 		cv2.CHAIN_APPROX_SIMPLE)
 
 
-		show_frame = np.copy(frame) 
+		
 
 		if contorno:					
 			M = cv2.moments(contorno[0])
 			x = int(M['m10']/M['m00'])
 			y = int(M['m01']/M['m00'])
-			cv2.circle(show_frame, (x,y), 8, (255,0,0),3)	
+			self.current_circle_x = x
+			self.current_circle_y = y			
+		else:
+			self.current_circle_x = -1
+			self.current_circle_y = -1
 
 
-		return ret, show_frame
+		return ret, frame
 	def setFramePos(self, pos):
 		if pos < 0 or pos >= self.config['total_frames']:
 			return False
@@ -177,3 +182,16 @@ class Mov_track:
 	def getTotalFrames(self):
 		return self.config['total_frames']
 
+	def getWidth(self):
+		while self.current_frame is None:
+			self.getNextFrame()
+
+		shape = self.current_frame.shape
+		return shape[1]
+
+	def getHeight(self):
+		while self.current_frame is None:
+			self.getNextFrame()
+			
+		shape = self.current_frame.shape
+		return shape[0]

@@ -35,7 +35,7 @@
      <x>90</x>
      <y>20</y>
      <width>491</width>
-     <height>371</height>
+     <height>421</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -43,41 +43,6 @@
      <widget class="QLabel" name="label_7">
       <property name="text">
        <string>3</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="2">
-     <widget class="QSlider" name="sldr_preBlur">
-      <property name="minimum">
-       <number>1</number>
-      </property>
-      <property name="maximum">
-       <number>500</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="11" column="0" colspan="2">
-     <widget class="QSlider" name="sldr_frameSkip">
-      <property name="minimum">
-       <number>0</number>
-      </property>
-      <property name="maximum">
-       <number>50</number>
-      </property>
-      <property name="singleStep">
-       <number>1</number>
-      </property>
-      <property name="pageStep">
-       <number>5</number>
-      </property>
-      <property name="value">
-       <number>0</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </item>
@@ -100,17 +65,16 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Pré-Blur</string>
+    <item row="1" column="0" colspan="2">
+     <widget class="QSlider" name="sldr_preBlur">
+      <property name="minimum">
+       <number>1</number>
       </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Pré-Threshold</string>
+      <property name="maximum">
+       <number>500</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </item>
@@ -128,27 +92,6 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="0">
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>Pós-Threshold</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="1">
-     <widget class="QLabel" name="label_8">
-      <property name="text">
-       <string>3</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLabel" name="label_6">
-      <property name="text">
-       <string>1</string>
-      </property>
-     </widget>
-    </item>
     <item row="3" column="0" colspan="2">
      <widget class="QSlider" name="sldr_postBlur">
       <property name="minimum">
@@ -162,22 +105,108 @@
       </property>
      </widget>
     </item>
-    <item row="9" column="0">
+    <item row="14" column="0">
      <widget class="QLabel" name="label_9">
       <property name="text">
        <string>Frame Skip</string>
       </property>
      </widget>
     </item>
-    <item row="9" column="1">
+    <item row="16" column="0" colspan="2">
+     <widget class="QSlider" name="sldr_frameSkip">
+      <property name="minimum">
+       <number>0</number>
+      </property>
+      <property name="maximum">
+       <number>50</number>
+      </property>
+      <property name="singleStep">
+       <number>1</number>
+      </property>
+      <property name="pageStep">
+       <number>5</number>
+      </property>
+      <property name="value">
+       <number>0</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="1">
      <widget class="QLabel" name="label_10">
       <property name="text">
        <string>0</string>
       </property>
      </widget>
     </item>
-    <item row="8" column="0" colspan="2">
-     <widget class="QSlider" name="sldr_postThreshold">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Pré-Blur</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Threshold Size</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLabel" name="label_6">
+      <property name="text">
+       <string>1</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0" colspan="2">
+     <widget class="QSlider" name="sldr_dilateKernelSize">
+      <property name="minimum">
+       <number>0</number>
+      </property>
+      <property name="maximum">
+       <number>50</number>
+      </property>
+      <property name="singleStep">
+       <number>1</number>
+      </property>
+      <property name="pageStep">
+       <number>5</number>
+      </property>
+      <property name="value">
+       <number>0</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_11">
+      <property name="text">
+       <string>Dilate Kernel Size</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Threshold Constant</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QLabel" name="label_8">
+      <property name="text">
+       <string>3</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0" colspan="2">
+     <widget class="QSlider" name="sldr_threshC">
       <property name="minimum">
        <number>3</number>
       </property>
@@ -192,6 +221,13 @@
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QLabel" name="label_12">
+      <property name="text">
+       <string>0</string>
       </property>
      </widget>
     </item>
@@ -249,14 +285,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>sldr_postThreshold</sender>
+   <sender>sldr_threshC</sender>
    <signal>valueChanged(int)</signal>
    <receiver>label_8</receiver>
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>328</x>
-     <y>308</y>
+     <x>337</x>
+     <y>294</y>
     </hint>
     <hint type="destinationlabel">
      <x>415</x>
@@ -271,12 +307,28 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>352</x>
-     <y>378</y>
+     <x>361</x>
+     <y>431</y>
     </hint>
     <hint type="destinationlabel">
-     <x>363</x>
-     <y>344</y>
+     <x>571</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sldr_dilateKernelSize</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>label_12</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>234</x>
+     <y>357</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>389</x>
+     <y>333</y>
     </hint>
    </hints>
   </connection>
