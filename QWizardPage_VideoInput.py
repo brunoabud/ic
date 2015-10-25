@@ -6,31 +6,42 @@ class QWizardPage_VideoInput(QtGui.QWizardPage):
 	def __init__(self, parent = None):
 		super(QtGui.QWizardPage, self).__init__(parent)
 
-		self.has_wiz_add_me = False									#Neste ponto os componentes provavelmente não foram inseridos
-																	#na classe de UI. E a página, apesar de ter sido criada, ainda não
-																	#foi adicionada ao Wizard.
+		#Inicializa a interface gráfica da classe QWizard Pai
+		#Apesar da página ter sido criada agora, ela ainda não foi adiciona ao QWizard portanto
+		#não é possível obter uma referência para a UI ainda.
+		self.wiz_ui = None
 
 	def initializePage(self):
-		if not self.has_wiz_add_me:
+		#Verifica se a referência para a interface gráfica do QWizard já foi criada
+		if self.wiz_ui is None:
 			if self.wizard() is not None:
 				self.wiz_ui = self.wizard().ui
-				self.has_wiz_add_me = True
 				self.connectSignals()
 			else:
-				return
-				
+				return False		
+
 	def isComplete(self):
-		if not self.has_wiz_add_me:
+		if self.wiz_ui is None:
 			return False
 
+		#Verifica se a opção arquivo está escolhida
+		#****A a opção camera ainda não está implementada!!!!
 		if not self.wiz_ui.rb_fromFile.isChecked():
-			return True
+			return False
 		else:
 			file_path = self.wiz_ui.ledit_videoPath.text()
 			if os.path.isfile(file_path):
 				return True
 			else:
 				return False
+
+		return True
+
+
+	def connectSignals(self):
+		self.wiz_ui.rb_fromFile.toggled.connect(self.rb_fromFile_toggled)
+		self.wiz_ui.pb_searchFile.clicked.connect(self.pb_searchFile_clicked)
+		self.wiz_ui.ledit_videoPath.textChanged.connect(self.ledit_videoPath_textChanged)
 
 	def pb_searchFile_clicked(self, checked):
 		file_path = QtGui.QFileDialog.getOpenFileName(self, u"Selecione o arquivo de vídeo", '', u"Arquivos de Vídeo (*.mov *.avi *.mpg *.mpeg *.wmv *.mkv *.3gp)")
@@ -48,5 +59,3 @@ class QWizardPage_VideoInput(QtGui.QWizardPage):
 
 	def ledit_videoPath_textChanged(self, text):
 		self.completeChanged.emit()
-
-

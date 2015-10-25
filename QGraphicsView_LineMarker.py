@@ -13,7 +13,6 @@ class QGraphicsView_LineMarker(QtGui.QGraphicsView):
 	def __init__(self, parent):
 		super(QtGui.QGraphicsView, self).__init__(parent)
 		self.createScene()
-		
 
 	def createScene(self):
 		#Variáveis de Controle

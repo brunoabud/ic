@@ -1,6 +1,15 @@
-preBlur 3
-dilateKernelSize 4
-postBlur 3
-threshC 8
-frameSkip 0
-preThreshold 13
+#Arquivo com os filtros que serão carregados pela ferramenta
+#Os valores podem ser editados diretamente no arquivo, ou pelo software
+#Cada linha representa um filtro e segue a seguinte estrutura:
+#Cada item é separado por uma tabulação
+#<filter_title>	<filter_name>	<min_value>	<max_value>	<value>	<default_value>	
+#Linhas que  começam com # são ignoradas, isto pode ser utilizado para colocar uma breve explicação sobre cada parâmetro
+#Linhas vazias, com paramêtros inválidos ou faltando são ignoradas
+
+Blur 1	preBlur	1	255	3	3
+Kernel de dilatação	dilateKernelSize	1	15	4	4
+Blur 2	postBlur	1	255	3	3
+Constante do Threshold	threshC	-90	90	8	8
+Frame Skip	frameSkip	0	20	0	0
+
+Threshold	preThreshold	1	255	13	13

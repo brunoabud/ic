@@ -1,6 +1,7 @@
 #coding: latin-1
 #Bibliotecas
 from PyQt4 import QtGui, QtCore
+import Analysis
 import sys
 
 #Interface Gráficas
