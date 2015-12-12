@@ -66,7 +66,7 @@ def getVideoDimensions():
 		shape = currentFrame.shape
 	
 
-	input_videoCapture.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, currentFrameI - 1)
+	input_videoCapture.set(cv2.CAP_PROP_POS_FRAMES, currentFrameI - 1)
 	return shape[1], shape[0]
 
 def clearAnalysis():
@@ -92,7 +92,7 @@ def open_input_fromFile(path = ''):
 def get_cap_totalFrames():
 	global input_videoCapture
 	if input_videoCapture.isOpened():
-		return input_videoCapture.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT)
+		return input_videoCapture.get(cv2.CAP_PROP_FRAME_COUNT)
 	else:
 		return 0
 
@@ -113,7 +113,7 @@ def set_cap_framePos(pos):
 	if pos < 0:
 		pos = 0
 
-	if input_videoCapture.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, pos):
+	if input_videoCapture.set(cv2.CAP_PROP_POS_FRAMES, pos):
 		currentFrameI = pos
 		getNextFrame()	
 	
@@ -141,7 +141,7 @@ def analyze(astart_frame = 0, atotal_frames = 0, afps = 240):
 	width, height = getVideoDimensions()
 
 	video_out = cv2.VideoWriter('mov_track.avi', 	
-			cv2.cv.CV_FOURCC('X','V','I','D'), afps, (width, height))
+			cv2.VideoWriter_fourcc('X','V','I','D'), afps, (width, height))
 
 	track_frame = np.zeros([height, width,3], np.uint8)
 

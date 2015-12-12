@@ -159,7 +159,7 @@ class QGraphicsView_LineMarker(QtGui.QGraphicsView):
 
 
 	def cv2ImgToQImage(self, array):
-		img = cv2.cvtColor(array, cv2.cv.CV_BGR2RGB)
+		img = cv2.cvtColor(array, cv2.COLOR_BGR2RGB)
 		qimg = QtGui.QImage(img.data, img.shape[1], img.shape[0], QtGui.QImage.Format_RGB888)
 		return qimg
 
