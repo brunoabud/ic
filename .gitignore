@@ -1,3 +1,6 @@
+# ignorar pasta de ambiente virtual
+ic-img/**
+
 *.pyc 
 # Windows image file caches
 Thumbs.db
