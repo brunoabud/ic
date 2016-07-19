@@ -1,0 +1,24 @@
+<RCC>
+  <qresource prefix="icon">
+    <file alias="console">raw/guake.png</file>
+    <file alias="magnifying_glass">raw/kview.png</file>
+    <file alias="tv">raw/tv.png</file>
+    <file alias="close">raw/close.png</file>
+    <file alias="application">raw/application.png</file>
+    <file alias="exit">raw/exit.png</file>
+    <file alias="folder">raw/folder.png</file>
+    <file alias="new_document">raw/new_document.png</file>
+    <file alias="save">raw/save.png</file>
+    <file alias="wrench">raw/wrench.png</file>
+    <file alias="add">raw/add.png</file>
+    <file alias="no">raw/no.png</file>
+    <file alias="up">raw/up.png</file>
+    <file alias="down">raw/down.png</file>
+    <file alias="arrowdown">raw/icon_arrowdown.png</file>
+    <file alias="load">raw/icon_load.png</file>
+    <file alias="pause">raw/icon_pause.png</file>
+    <file alias="play">raw/icon_play.png</file>
+    <file alias="delete">raw/icon_delete.png</file>
+    <file alias="refresh">raw/icon_refresh.png</file>
+  </qresource>
+</RCC>

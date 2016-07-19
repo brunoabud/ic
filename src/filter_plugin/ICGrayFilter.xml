@@ -1,0 +1,9 @@
+<Filter>
+    <Title>Gray Filter</Title>
+    <Author>Imagem Cinematica</Author>
+    <Description>Converts BGR to Gray (But keeps the 3 channels)</Description>
+    <Version>1.0.0</Version>
+
+    <Data>
+    </Data>
+</Filter>

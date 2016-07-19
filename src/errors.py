@@ -1,0 +1,2 @@
+class NoMediaOpenedError(Exception):
+    pass
