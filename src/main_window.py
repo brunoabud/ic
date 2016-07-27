@@ -16,18 +16,7 @@ import main
 import messages
 import plugin
 import log
-
-
-#Callbacks for the Filter GUI Buttons
-class LogListener(object):
-    def __init__(self, out):
-        self.out = out
-    def write(self, text):
-        try:
-            self.out.insertPlainText(QString(str(text).replace('\\n', '\n')))
-            self.out.moveCursor(QTextCursor.End)
-        except:
-            pass
+from exit_dialog import ExitDialog
 
 
 class ICMainWindow(QMainWindow):
@@ -41,7 +30,7 @@ class ICMainWindow(QMainWindow):
         try:
             ret = main.ic.open_VAMO(ICGUI_Interface(self), name)
         except:
-            Log.dump_traceback()
+            log.dump_traceback()
 
     def receive_message(self, message_type, message_data, sender):
         if message_type == 'input_plugin_loaded':
@@ -60,9 +49,9 @@ class ICMainWindow(QMainWindow):
 
     def actn_close_input_plugin_triggered(self, checked):
         try:
-            Main.ic.closeVIMO()
+            main.ic.close_VIMO()
         except:
-            Log.dump_traceback()
+            log.dump_traceback()
 
     def actn_load_analysis_plugin_triggered(self, checked):
         ret, selected = ICPluginDialog.select_from_dir(main.settings['analysis_dir'])
@@ -88,11 +77,14 @@ class ICMainWindow(QMainWindow):
         if ret:
             main.ic.filter_rack.load(selected)
 
+    def actn_show_console_triggered(self, checked):
+        main.consolewindow.show()
+        main.consolewindow.activateWindow()
+        main.consolewindow.raise_()
+
     def __init__(self, parent = None):
         super(ICMainWindow, self).__init__(parent)
         uic.loadUi(pjoin(main.settings['ui_dir'], 'ICMainWindow.ui'), self)
-        self.log = LogListener(self.txt_console)
-        log.add_output(self.log)
 
         messages.add_message_listener(self)
 
@@ -106,10 +98,21 @@ class ICMainWindow(QMainWindow):
         self.actn_close_input_plugin.triggered.connect(self.actn_close_input_plugin_triggered)
         self.actn_load_analysis_plugin.triggered.connect(self.actn_load_analysis_plugin_triggered)
         self.actn_close_analysis_plugin.triggered.connect(self.actn_close_analysis_plugin_triggered)
-
+        self.actn_show_console.triggered.connect(self.actn_show_console_triggered)
         self.pb_add_filter.clicked.connect(self.actn_add_filter.trigger)
         self.actn_add_filter.triggered.connect(self.actn_add_filter_triggered)
         self.load_input_plugin('ICFile')
 
     def closeEvent(self, event):
-        main.ic.release()
+        ret = QMessageBox.question(None, u"Exit Imagem Cinemática", ("If you"
+        " exit now, all progress will be lost. Do you really wanna exit?"),
+        QMessageBox.No | QMessageBox.Yes)
+
+        if ret == QMessageBox.Yes:
+            def c(ev): ev.accept()
+            self.closeEvent = c
+            d = ExitDialog()
+            d.start()
+            d.accepted.connect(self.close)
+
+        event.ignore()

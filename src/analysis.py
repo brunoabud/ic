@@ -20,7 +20,7 @@ import main
 
 
 class PreviewOption(Enum):
-    """This enum holds the preview source options."""
+    """Enum that holds the preview source options."""
     #No preview is defined
     NoPreview = 1
     #Right after the VIMO has read the video
@@ -100,6 +100,13 @@ class ICAnalysis(object):
             if self._VAMO:
                 try:
                     self._VAMO.on_media_closed(self._media._state.clone())
+                except:
+                    log.dump_traceback()
+                    self.close_VAMO()
+        elif message_type == "media_sought":
+            if self._VAMO:
+                try:
+                    self._VAMO.on_media_sought(self._media._state.clone())
                 except:
                     log.dump_traceback()
                     self.close_VAMO()

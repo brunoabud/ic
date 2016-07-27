@@ -98,6 +98,9 @@ class ICFrameSub(object):
         self.mplcanvas.figure.clear()
         self.mplcanvas.draw()
 
+    def on_media_sought(self, media_state):
+        pass
+    
     def process_frame(self, media_state, frame):
         if self.previous is None:
             self.previous = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

@@ -1,12 +1,12 @@
-app_path     = None
-app          = None
-settings     = None
+app_path      = None
+app           = None
+settings      = None
 
-rawqueue     = None
-previewqueue = None
+rawqueue      = None
+previewqueue  = None
 
-ic           = None
-reader       = None
-processor    = None
+ic            = None
+worker        = None
 
-mainwindow   = None
+mainwindow    = None
+consolewindow = None

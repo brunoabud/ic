@@ -3,7 +3,7 @@ import sys
 import os
 
 from PyQt4.QtGui import QFileDialog, QMessageBox, QPushButton, QGridLayout, QWidget
-from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt4.QtCore import QObject, pyqtSignal, Qt, pyqtSlot
 from PyQt4 import QtGui, QtCore
 from pymediainfo import MediaInfo
 from cv2 import VideoCapture
@@ -15,7 +15,7 @@ import log
 
 
 
-class ICFile(QObject):
+class ICFile(object):
     def __init__(self):
         self.cap  = VideoCapture()
         self.pos  = None
@@ -57,7 +57,7 @@ class ICFile(QObject):
             else:
                 log.write("OpenCV3 VideoCapture object could not open file {}".format(path))
         except:
-            log.dumptraceback()
+            log.dump_traceback()
             self.cap.release()
             return False
 
@@ -96,10 +96,10 @@ class ICFile(QObject):
 
         layout.addWidget(self.pb_open, 0, 0)
         self.pb_open.setText("Open Video File")
-        self.pb_open.clicked.connect(self.pb_open_clicked)
 
         self.widget.setLayout(layout)
-        self.gui.add_tool_tab(self.widget, "Video File")
+        self.gui.add_tool_tab(self.widget, "ICFile")
+        self.pb_open.clicked.connect(self.pb_open_clicked)
         return True
 
     def release(self):

@@ -2,7 +2,7 @@
 from PyQt4.QtCore import pyqtSlot
 from enum import Enum
 
-from worker import ICWorker
+from worker_thread import WorkerThread
 import main
 from queue import Full, Empty
 from analysis import PreviewOption
@@ -18,17 +18,15 @@ class ProcessorState(Enum):
     PuttingProcessed = 5
 
 
-class ICWorker_Processor(ICWorker):
-    def __init__(self):
-        super(ICWorker_Processor, self).__init__('processor')
+class ProcessorThread(WorkerThread):
+    def __init__(self, notifier):
+        super(ProcessorThread, self).__init__(notifier)
 
-    @pyqtSlot()
-    def _start_work(self):
+    def work_started(self):
         self.state = ProcessorState.GettingRaw
         self._frame = None
 
-    @pyqtSlot()
-    def _do_work(self):
+    def do_work(self):
         try:
             ic = main.ic
             rawqueue = main.rawqueue
@@ -72,7 +70,6 @@ class ICWorker_Processor(ICWorker):
         except (Full, Empty) as e:
             pass
         except Exception as e:
-            print "A"
             import traceback
             traceback.print_exc()
             raise

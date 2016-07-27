@@ -1,47 +1,51 @@
-if __name__ == '__main__':
-    import main
-    from PyQt4.QtGui import QApplication
-    from os.path import join as pjoin
-    import queue
-    import sys
-    import messages
-    import resources
+from os.path import join as pjoin
+import sys
 
-    main.app_path     = sys.path[0]
-    main.app          = QApplication(sys.argv)
+from PyQt4.QtGui import QApplication
+from PyQt4.QtCore import QThread
 
-    messages.init_message_system()
-    main.settings     = {
-                    'raw_length'        : 1                                 ,
-                    'preview_length'    : 1                                 ,
-                    'filter_dir'        : pjoin(main.app_path, 'filter_plugin')  ,
-                    'video_dir'         : pjoin(main.app_path, 'video_plugin')   ,
-                    'analysis_dir'      : pjoin(main.app_path, 'analysis_plugin'),
-                    'ui_dir'            : pjoin(main.app_path, 'ui')             ,
-                    'log_dir'           : pjoin(main.app_path, 'log')            ,
-                    'thread_exittimeout': 500                               ,
-                    }
-    main.previewqueue = queue.ICQueue(main.settings['preview_length'])
-    main.rawqueue     = queue.ICQueue(main.settings['raw_length'])
-    import analysis
-    import main_window
-    import worker_processor, worker_reader
+import main
+import queue
+import messages
+import resources
+import analysis
+import main_window
+from analysis_worker import AnalysisWorker
 
-    try:
-        main.ic           = analysis.ICAnalysis()
-        main.reader       = worker_reader.ICWorker_VIMOReader()
-        main.processor    = worker_processor.ICWorker_Processor()
-        main.mainwindow   = main_window.ICMainWindow()
-        main.mainwindow.frm_playback.init()
-        main.mainwindow.showMaximized()
-        main.app.exec_()
+from console import Console
 
-        main.ic.release()
-    except:
-        import traceback
-        traceback.print_exc()
-    finally:
-        main.reader.exit_and_wait()
-        main.processor.exit_and_wait()
-        resources.qCleanupResources()
-        sys.exit(0)
+main.app_path     = sys.path[0]
+main.app          = QApplication(sys.argv)
+main.settings     = {
+                'raw_length'        : 1                                 ,
+                'preview_length'    : 1                                 ,
+                'filter_dir'        : pjoin(main.app_path, 'filter_plugin')  ,
+                'video_dir'         : pjoin(main.app_path, 'video_plugin')   ,
+                'analysis_dir'      : pjoin(main.app_path, 'analysis_plugin'),
+                'ui_dir'            : pjoin(main.app_path, 'ui')             ,
+                'log_dir'           : pjoin(main.app_path, 'log')            ,
+                'thread_exittimeout': 500                               ,
+                }
+main.previewqueue = queue.ICQueue(main.settings['preview_length'])
+main.rawqueue     = queue.ICQueue(main.settings['raw_length'])
+
+messages.init_message_system()
+
+ret = -1
+try:
+    main.ic            = analysis.ICAnalysis()
+    main.worker        = AnalysisWorker()
+    main.consolewindow = Console()
+    main.mainwindow    = main_window.ICMainWindow()
+
+    main.consolewindow.show()
+    main.mainwindow.frm_playback.init()
+    main.mainwindow.showMaximized()
+
+    ret = main.app.exec_()
+except:
+    import traceback
+    traceback.print_exc()
+finally:
+    resources.qCleanupResources()
+    sys.exit(ret)

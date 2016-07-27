@@ -1,11 +1,8 @@
 #encoding: utf-8
-import os
-import itertools
 
-from PyQt4.QtGui import QStringListModel, QApplication, QPushButton, QFrame
-from PyQt4.QtGui import QWidget, QDialog, QMainWindow, QMessageBox, QIcon
-from PyQt4.QtCore import QObject, Qt, pyqtSlot, SIGNAL, SLOT, QTimer
-from PyQt4.QtGui import QAbstractSlider
+
+from PyQt4.QtGui import QFrame
+from PyQt4.QtCore import Qt, QTimer
 from PyQt4 import uic
 from enum import Enum
 
@@ -61,14 +58,12 @@ class ICPlaybackFrame(QFrame):
             main.mainwindow.scb_pos.setRange(0, 0)
             main.mainwindow.pb_play.setChecked(False)
             self.setEnabled(False)
-        elif message_type == 'worker_stopped':
+        elif message_type == 'workers_stopped':
             main.mainwindow.pb_play.setChecked(False)
             self.previewtimer.stop()
-        elif message_type == 'media_seeked':
+        elif message_type == 'media_sought':
             self.waiting_seek = False
             if not main.mainwindow.pb_play.isChecked():
-                messages.post_message('start_worker', {'single_shot' : True, 'id': 'reader'}, self)
-                messages.post_message('start_worker', {'single_shot' : True, 'id': 'processor'}, self)
                 self.previewtimer.start(0)
                 self.single_shot = True
 
@@ -89,12 +84,10 @@ class ICPlaybackFrame(QFrame):
 
     def pb_play_clicked(self, checked):
         if checked:
-            messages.post_message('start_worker', {'single_shot' : False, 'id': 'reader'}, self)
-            messages.post_message('start_worker', {'single_shot' : False, 'id': 'processor'}, self)
+            messages.post_message('start_workers', {'tasks' : 0}, self)
             self.previewtimer.start()
         else:
-            messages.post_message('stop_worker', {'id': 'reader'}, self)
-            messages.post_message('stop_worker', {'id': 'processor'}, self)
+            messages.post_message('stop_workers', {}, self)
 
     def preview_timeout(self):
         try:
