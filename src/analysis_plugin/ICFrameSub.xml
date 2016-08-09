@@ -1,8 +1,0 @@
-<VideoAnalysisModule>
-    <Title>Frame Sub'er</Title>
-    <Author>Imagem Cinematica</Author>
-    <Description>Tracks movement by frame subtraction. Shows charts
-    and etc.</Description>
-    <Version>1.0.0</Version>
-
-</VideoAnalysisModule>

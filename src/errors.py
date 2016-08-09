@@ -1,2 +1,0 @@
-class NoMediaOpenedError(Exception):
-    pass

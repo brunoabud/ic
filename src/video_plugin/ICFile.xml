@@ -1,6 +1,0 @@
-<VideoInput>
-    <Title>File Input</Title>
-    <Author>Imagem Cinematica</Author>
-    <Description>Implements the OpenCV2 Capture Object to open a VideoFile.</Description>
-    <Version>1.0.0</Version>
-</VideoInput>
