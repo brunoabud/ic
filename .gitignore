@@ -1,6 +1,7 @@
 # Virtual Environment
 ic-img/**
 env/
+src/
 
 # Unit test / coverage reports
 *_TestUnity.py
