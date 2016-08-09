@@ -55,7 +55,7 @@ class ProcessorThread(WorkerThread):
                 if ic.VAMO is None:
                     self.state = ProcessorState.GettingRaw
                 else:
-                    self._frame = ic.VAMO.process_frame(self._mediastate, self._frame)
+                    self._mediastate, self._frame = ic.VAMO.process_frame(self._mediastate, self._frame)
                     self.state = ProcessorState.PuttingProcessed
 
             if self.state is ProcessorState.PuttingProcessed:

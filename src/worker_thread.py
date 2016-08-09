@@ -5,6 +5,7 @@ from PyQt4.QtCore import QThread, QTimer, qDebug
 from PyQt4.QtGui import QApplication
 
 from queue import ICQueue, Empty
+from media import MediaClosedError()
 
 class WorkerThread(QThread):
     def __init__(self, notifier):
@@ -45,6 +46,8 @@ class WorkerThread(QThread):
                         #If the do work returned false, do nothing
                         pass
                 except EOFError:
+                    self.notifier.notify("stop_work")
+                except MediaClosedError:
                     self.notifier.notify("stop_work")
                 except:
                     tb.print_exc()

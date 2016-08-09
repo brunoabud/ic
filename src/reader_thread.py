@@ -60,8 +60,6 @@ class ReaderThread(WorkerThread):
             pass
         except FrameError as e:
             self.state = ReaderState.GettingRaw
-        except MediaClosedError:
-            raise
         except EOFError as e:
             if media.state.seekable and media.loop:
                 media.seek(CursorPosition.Begin)
@@ -69,5 +67,4 @@ class ReaderThread(WorkerThread):
             else:
                 raise
         except Exception as e:
-            traceback.print_exc()
             raise

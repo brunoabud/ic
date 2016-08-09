@@ -22,15 +22,15 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="2">
-    <widget class="ICListPlugin" name="list_plugins"/>
+    <widget class="ListPlugin" name="list_plugins"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ICListPlugin</class>
+   <class>ListPlugin</class>
    <extends>QListWidget</extends>
-   <header>plugin_dialog</header>
+   <header>gui.plugin_dialog</header>
    <slots>
     <signal>itemSelected(bool)</signal>
    </slots>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<VideoInput>
+    <Title>Video File Loader</Title>
+    <Author>Imagem Cinemática</Author>
+    <Description>Open a video file using a OpenCV VideoCapture object.</Description>
+    <Version>1.0.0</Version>
+</VideoInput>

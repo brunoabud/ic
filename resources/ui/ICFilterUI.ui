@@ -6,12 +6,52 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>111</height>
+    <width>377</width>
+    <height>134</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Frame</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QFrame {
+    border: 2px solid black;
+    border-radius: 4px;
+}
+
+QFrame#frm_parameters {
+    border: 1px solid black;
+    border-radius: 4px;
+    background-color: rgb(230, 230, 230);
+}
+
+QLabel {
+	border: none;
+}
+
+QLabel#lbl_fid {
+	border: 1px solid black;
+border-radius:none;
+}
+
+QPushButton:!checked {
+	border: 1px solid black;
+	border-radius: 6px;
+	max-width: 22px;
+	max-height: 22px;
+	min-width: 22px;
+	min-height: 22px;
+
+}
+
+QPushButton#pb_parameters {
+	border: none;
+	border-radius: 6px;
+	max-width: 999999px;
+	max-height: 20px;
+	min-width: 0;
+	min-height: 20px;
+}</string>
   </property>
   <property name="frameShape">
    <enum>QFrame::Panel</enum>
@@ -32,18 +72,53 @@
    <property name="margin">
     <number>3</number>
    </property>
-   <item row="0" column="2">
-    <widget class="QPushButton" name="pb_down">
+   <item row="3" column="0">
+    <widget class="QPushButton" name="pb_up">
      <property name="minimumSize">
       <size>
-       <width>23</width>
-       <height>25</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>23</width>
-       <height>25</height>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Move filter up</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/ic_resources.qrc">
+       <normaloff>:/icon/up</normaloff>:/icon/up</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QPushButton" name="pb_down">
+     <property name="minimumSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="toolTip">
@@ -53,7 +128,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="resources/ic_resources.qrc">
+      <iconset resource="../res/ic_resources.qrc">
        <normaloff>:/icon/down</normaloff>:/icon/down</iconset>
      </property>
      <property name="iconSize">
@@ -67,18 +142,18 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="4">
+   <item row="2" column="0">
     <widget class="QPushButton" name="pb_ignore">
      <property name="minimumSize">
       <size>
-       <width>23</width>
-       <height>25</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>23</width>
-       <height>25</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="toolTip">
@@ -88,7 +163,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="resources/ic_resources.qrc">
+      <iconset resource="../res/ic_resources.qrc">
        <normaloff>:/icon/no</normaloff>:/icon/no</iconset>
      </property>
      <property name="iconSize">
@@ -108,78 +183,14 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="3">
-    <widget class="QPushButton" name="pb_up">
-     <property name="minimumSize">
-      <size>
-       <width>23</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>23</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Move filter up</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="resources/ic_resources.qrc">
-       <normaloff>:/icon/up</normaloff>:/icon/up</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>16</width>
-       <height>16</height>
-      </size>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="5">
-    <widget class="QPushButton" name="pb_remove">
-     <property name="minimumSize">
-      <size>
-       <width>23</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>23</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Remove filter</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="resources/ic_resources.qrc">
-       <normaloff>:/icon/delete</normaloff>:/icon/delete</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>16</width>
-       <height>16</height>
-      </size>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
+   <item row="0" column="0" colspan="4">
     <widget class="QLabel" name="title">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="font">
       <font>
        <weight>75</weight>
@@ -197,7 +208,80 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="6">
+   <item row="0" column="4">
+    <widget class="QLabel" name="lbl_fid">
+     <property name="minimumSize">
+      <size>
+       <width>45</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>45</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>Plugin ID</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <property name="text">
+      <string>000</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <widget class="QPushButton" name="pb_remove">
+     <property name="minimumSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Remove filter</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/ic_resources.qrc">
+       <normaloff>:/icon/delete</normaloff>:/icon/delete</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" rowspan="3" colspan="5">
     <widget class="QFrame" name="frm_parameters">
      <property name="frameShape">
       <enum>QFrame::Panel</enum>
@@ -224,11 +308,11 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0" colspan="6">
+   <item row="5" column="0" colspan="6">
     <widget class="QPushButton" name="pb_parameters">
      <property name="maximumSize">
       <size>
-       <width>16777215</width>
+       <width>999999</width>
        <height>20</height>
       </size>
      </property>
@@ -239,7 +323,7 @@
       <string notr="true"/>
      </property>
      <property name="icon">
-      <iconset resource="resources/ic_resources.qrc">
+      <iconset resource="../res/ic_resources.qrc">
        <normaloff>:/icon/arrowdown</normaloff>:/icon/arrowdown</iconset>
      </property>
      <property name="iconSize">
@@ -256,45 +340,10 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="lbl_fid">
-     <property name="minimumSize">
-      <size>
-       <width>45</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>45</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="text">
-      <string>000</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources>
-  <include location="resources/ic_resources.qrc"/>
+  <include location="../res/ic_resources.qrc"/>
  </resources>
  <connections>
   <connection>
