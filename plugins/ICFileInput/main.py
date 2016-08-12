@@ -6,14 +6,94 @@ from xml.dom.minidom import Document
 import traceback
 
 from PyQt4.QtGui import QFileDialog, QMessageBox, QPushButton, QGridLayout, QWidget
-from PyQt4.QtGui import QLabel
+from PyQt4.QtGui import QLabel, QInputDialog
 from PyQt4.QtCore import QObject, pyqtSignal, Qt, pyqtSlot
 from PyQt4 import QtGui, QtCore
 from cv2 import VideoCapture
 import cv2
 
 from gui import tr
-from util import media_info
+
+INFO_FROM_OPENCV  = 0x1
+INFO_FROM_FFPROBE = 0x2
+INFO_FROM_DEFAULT = 0x3
+
+info_source = 0x0
+
+# Define the function that will be used to read the media info
+try:
+    import ffmpy
+    # Check if the ffprobe executable was found
+    probe = ffmpy.FFprobe(global_options="-version")
+    probe.run()
+    info_source = INFO_FROM_FFPROBE
+except ImportError:
+    print "ffmpy library not found, using OpenCV methods for getting media info"
+    info_source = INFO_FROM_OPENCV
+except ffmpy.FFExecutableNotFoundError:
+    print "ffprobe executable not found, using OpenCV methods for getting media info"
+    info_source = INFO_FROM_OPENCV
+
+def get_info_ffprobe(path):
+    # Check if the file exists
+    if not os.path.isfile(path):
+        raise OSError("file {} not found".format(path))
+    # Execute the ffprobe and get the xml data
+    probe = ffmpy.FFprobe(inputs={path:"-print_format xml -show_streams -select_streams v:0"})
+    xml_data = probe.run()
+    # Parse from string
+    doc = minidom.parseString(xml_data)
+    # Collect the stream node
+    stream_element = doc.getElementsByTagName("stream")[0]
+
+    attr = stream_element.attributes
+    info = {}
+
+    attrs = {"nb_frames": "length", "width": "width", "height": "height",
+    "avg_frame_rate": "fps"}
+
+    # Collect the attributes from the `stream` node
+    for i in range(0, attr.length):
+        a = attr.item(i)
+        try:
+            # Convert from unicode if possible
+            name = str(a.localName)
+            value = str(a.value)
+            if name not in attrs:
+                continue
+            # If it has a / convert to float
+            if "/" in value:
+                a, b = value.split("/")
+                value = float(a) / float(b)
+            # Check if it contains only numbers (integer)
+            elif all(map(lambda c: c in "1234567890", value)):
+                value = int(value)
+            info[attrs[name]] = value
+        except:
+            # Ignore attribute
+            pass
+    return info
+
+def get_info_opencv(path):
+    cap = cv2.VideoCapture()
+    if cap.open(path):
+        def get_prop(p):
+            return cap.get(p)
+        fps    = float(get_prop(cv2.CAP_PROP_FPS))
+        length = int(get_prop(cv2.CAP_PROP_FRAME_COUNT))
+        height = int(get_prop(cv2.CAP_PROP_FRAME_HEIGHT))
+        width  = int(get_prop(cv2.CAP_PROP_FRAME_WIDTH))
+
+        if not all([fps, length, height, width]):
+            raise cv2.error()
+        else:
+            return {"width": width, "height": height, "length": length, "fps": fps}
+    else:
+        raise cv2.error()
+
+def get_info_default(path):
+    return  {"width": 800, "height": 600, "length": 100, "fps": 30.0}
+
 
 class ICFileInput(object):
     # Max number of recent files to save
@@ -137,8 +217,7 @@ class ICFileInput(object):
         selected_file = QFileDialog.getOpenFileName(
             None,
             caption,
-            self.lastdir,
-            options=QFileDialog.DontUseNativeDialog
+            self.lastdir
             )
 
         if not selected_file.isEmpty():
@@ -162,43 +241,43 @@ class ICFileInput(object):
         file_path = str(self.tools.le_path.text())
 
         if self.capture.open(file_path):
-            # Parse the video file info
             try:
-                info   = media_info.get_info(file_path)
-            except Exception as e:
-                title = tr("ICFileInput",
-                    "Error when parsing media info"
-                    )
-
-                caption = tr("ICFileInput",
-                    "An exception was raised when trying to parse the media info."
-                    )
-                traceback.print_exc()
-                QMessageBox.warning(None, title, caption)
-                # Close the capture file
-                self.capture.release()
-                return
-
-            # Get the info
-            try:
-                v    = info
-                fps    = v["avg_frame_rate"]
-                size   = (v["width"], v["height"])
-                length = v["nb_frames"]
-
+                if info_source == INFO_FROM_FFPROBE:
+                    info = get_info_ffprobe(file_path)
+                elif info_source == INFO_FROM_OPENCV:
+                    info = get_info_opencv(file_path)
             except:
-                title = tr("ICFileInput",
-                    "Media info error"
-                    )
+                title = tr("ICFileInput", "Media info could not be obtained")
+                caption = tr("ICFileInput", "An error ocurried when trying to get media info using %1. You can use default values or manually input them. Would you like to continue?")
+                mode = {INFO_FROM_OPENCV: "OpenCV", INFO_FROM_FFPROBE: "ffprobe"}
+                caption = caption.arg(mode[info_source])
 
-                caption = tr("ICFileInput",
-                    "The plugin could not get some informations about the video file"
-                    )
-                traceback.print_exc()
-                QMessageBox.warning(None, title, caption)
-                # Release the capture
-                self.capture.release()
-                return
+                ret = QMessageBox.question(None, title, caption, QMessageBox.Yes | QMessageBox.No)
+                if ret == QMessageBox.Yes:
+                    info = get_info_default(file_path)
+
+                    for v in info:
+                        while True:
+                            title = tr("ICFileInput", "Media info values")
+                            caption = tr("ICFileInput", "Insert value for '%1'")
+                            value, ret = QInputDialog.getText(None, title, caption.arg(str(v)), text = str(info[v]))
+                            try:
+                                if not ret:
+                                    return
+                                value = float(str(value))
+                                info[v] = value
+                                break
+                            except:
+                                t = tr("ICFileInput", "Invalid value")
+                                c = tr("ICFileInput", "The value must be of a numeric type")
+                                QMessageBox.warning(None, t, c)
+                else:
+                    self.capture.release()
+                    return
+
+            fps    = float(info["fps"])
+            size   = (int(info["width"]), int(info["height"]))
+            length = int(info["length"])
 
             self.fps = fps
             self.size = size
