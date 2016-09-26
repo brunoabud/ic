@@ -28,6 +28,7 @@ if __name__ == "__main__":
     handler.addFilter(ic.log.NameFilter("PyQt4"))
 
     log = logging.getLogger(__name__)
+
     # Import all main modules
     try:
         from gui             import application

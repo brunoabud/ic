@@ -50,17 +50,28 @@ class ANSIFormatter(logging.Formatter):
         B_ = self.COLORS["BOLD_RESET"]
         D  = self.COLORS["COLOR_DEFAULT"]
 
-        if record.levelno != logging.INFO:
-            fmt  = D+"@ %(name)s at %(pathname)s[%(lineno)i]" + " @@ " + B+C1+"%(message)s"+D+B_
+        self.C1 = C1
+        self.C2 = C2
+
+        name = D+B_+"%(name)s"
+        path = D+B_+"%(pathname)s, line %(lineno)i"
+        levelname = C1+B+"%(levelname)s"
+        message   = C1+B+"%(message)s"
+
+        if record.levelno == logging.DEBUG:
+            fmt  = "from " + path + "\n"
+            fmt  = fmt + name + D+B_+ "[" + levelname + D+B_+ "]" + D+B_+": " + message + B_+D
         else:
-            fmt  = D+"@ %(name)s" + " @@ " + B+C1+"%(message)s"+D+B_
+            fmt  = name + D+B_+ "[" + levelname + D+B_+ "]" + D+B_+": " + message + B_+D
+
         # Format exceptions if there is any
         if record.exc_info:
             record.exc_text = self.formatException(record.exc_info)
         if record.exc_text is not None:
-            fmt = C1 +B+"\n%(levelname)8s"+B_ + " @ Exception"+  "\n%(exc_text)s\n" + "         " + fmt
+            fmt = fmt + "\n\n" + record.exc_text
         else:
-            fmt = C1+B+"\n%(levelname)8s "+D+B_ + fmt
+            fmt = fmt + "\n"
+
         # Computate message attribute
         record.message = record.getMessage()
         # Format time if needed
@@ -74,11 +85,20 @@ class ANSIFormatter(logging.Formatter):
     def formatException(self, exc_inf):
         B  = self.COLORS["BOLD"]
         B_ = self.COLORS["BOLD_RESET"]
+        C1 = self.C1
+        C2 = self.C2
+        D = self.COLORS["COLOR_DEFAULT"]
         exc_type, value, tb = exc_inf
 
-        fmt = B+"             type : "+B_ + exc_type.__module__ + "." + exc_type.__name__  + "\n"
-        fmt = fmt + B+"             value: "+B_ + str(value) + "\n"
-        fmt = fmt + "         @ Traceback\n"
+        e_module = str(exc_type.__module__)
+        e_module = e_module + "." if e_module != "" else ""
+
+        e_type = B+C1+ e_module + str(exc_type.__name__)
+        e_message = C1+B_+ str(value)
+        fmt = "    " + e_type + D+B_+ ": " + e_message + D+B_+"\n" + D+B_
+        fmt = fmt + B+"    Traceback (most recent calls last):\n"
+
+        identation = "        "
         # Extract tracebacks
         tb_list = traceback.extract_tb(tb)
 
@@ -86,7 +106,8 @@ class ANSIFormatter(logging.Formatter):
             f, line, f_name, text = entry
             if f_name is not None:
                 f_name = f_name + " in"
-            entry_text = B+"             %(f_name)s %(f)s[%(line)i]"+B_ + "\n                %(text)s\n"
-            fmt = fmt + entry_text % locals()
+            entry_text = identation + C1+B+"%(f_name)s %(f)s[%(line)i]" + "\n"
+            entry_text = entry_text +  identation + C1+B_ + "  %(text)s\n"
+            fmt = fmt + entry_text % locals() + D+B_
 
         return fmt

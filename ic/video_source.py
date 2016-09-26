@@ -128,61 +128,13 @@ class VideoSource(object):
 
     def is_open(self):
         return self._source_open
-'''
-    def set_video_input(self, plugin_id):
-        """Sets the current Video Input Plugin.
 
-        This methods close any previously loaded Plugin and initialize the new
-        one. It does not load or unload the plugins, just init and close them.
-
-        """
-        app = get_app()
-        #Check if the plugin_id is valid
-        new_plugin = app.get_plugin(plugin_id)
-        if not new_plugin.plugin_type == Application.PLUGIN_TYPE_VIDEO_INPUT:
-            raise TypeError("Wrong Plugin Type {}".format(new_plugin.plugin_type))
-
-        if app.video_input_info:
-            current_id = app.video_input_info["plugin_id"]
-            current_plugin = app.get_plugin(current_id)
-
-            #Call the plugin close method
-            try:
-                current_plugin.instance.close_plugin()
-            except:
-                log.error("Error when closing the plugin", exc_info=True)
-            #Release the gui interface
-            try:
-                current_plugin.gui_interface.release()
-                current_plugin.gui_interface = None
-            except:
-                log.error("Error when releasing the gui interface", exc_info=True)
-            #Clean the input plugin info
-            del app.video_input_info
-            #Close the VideoSource bridge
-            self.close_bridge()
-            #Post the message signaling that the video input was closed
-            app.post_message("video_input_closed", {"plugin_id": current_id}, -1)
-
-        #Get a input bridge to the video source object
-        video_source_bridge = self.get_input_bridge()
-        #Object that provides gui access to the plugin
-        interface = GUI_Interface(plugin_id)
-        #Init the plugin
-        try:
-            ret = new_plugin.instance.init_plugin(gui_interface=interface, video_source_bridge=video_source_bridge)
-            if ret:
-                #Init the VideoSource bridge
-                self.init_bridge(new_plugin.instance)
-                new_plugin.gui_interface = interface
-                app.video_input_info =  {"plugin_id": plugin_id}
-                app.post_message("video_input_changed", {"plugin_id": plugin_id}, -1)
-            else:
-                interface.release()
-                raise PluginInitError("init_plugin returned False")
-        except:
-            log.error("Error when initialiazing input plugin", exc_info=True)
-            raise PluginInitError("Plugin init. raised exception")
-            interface.release()
-            self.close_bridge()
-'''
+    def source_state(self):
+        if not self.is_open():
+            raise SourceClosedError()
+        return {
+            "fps": self._plugin_instance.get_fps(),
+            "pos": self._plugin_instance.tell(),
+            "length": self._plugin_instance.get_length(),
+            "size": self._plugin_instance.get_size()
+        }

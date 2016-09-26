@@ -430,6 +430,7 @@ class Application(object):
 
         UILoadError : If the `uic` module raises any exception
         """
+        # Temporary solution for resolving circular dependencies
         engine = sys.modules["ic.engine"]
         plugin = engine.get_plugin(plugin_id)
 
@@ -506,6 +507,7 @@ class Application(object):
         KeyError : If there is no ui object with the given name.
 
         """
+        # Temporary solution for resolving circular dependencies
         engine = sys.modules["ic.engine"]
         plugin = engine.get_plugin(plugin_id)
         if name not in plugin.loaded_ui_objects:
@@ -530,6 +532,7 @@ class Application(object):
             "default" and if so, the current translator will be removed and the
             language will be send to default.
         """
+        # Temporary solution for resolving circular dependencies
         engine = sys.modules["ic.engine"]
         join = os.path.join
         isfile = os.path.isfile

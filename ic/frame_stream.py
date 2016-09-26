@@ -207,13 +207,29 @@ class VideoProcessingThread(FSWorkerThread):
             if get_app().user_options["preview_source"] == Application.OPT_PREVIEW_POST_FILTER:
                 try:
                     self.fs.preview_queue.put((self.frame_state, self.filtered_frame), False)
-                    self.state = VideoProcessingThread.VP_GETTING_RAW_FRAME
-                    return True
+                    self.state = VideoProcessingThread.VP_PROCESSING
                 except:
                     pass
             else:
+                self.state = VideoProcessingThread.VP_PROCESSING
+
+        if self.state == VideoProcessingThread.VP_PROCESSING:
+            plugin = engine.get_plugin(engine.get_analysis_plugin()["plugin_id"]).instance
+
+            self.processed_state, self.processed_frame = plugin.process_frame(self.filtered_frame, self.frame_state)
+            if get_app().user_options["preview_source"] == Application.OPT_PREVIEW_POST_ANALYSIS:
+                self.state = VideoProcessingThread.VP_PUTTING_PROCESSED_PREVIEW
+            else:
                 self.state = VideoProcessingThread.VP_GETTING_RAW_FRAME
                 return True
+
+        if self.state == VideoProcessingThread.VP_PUTTING_PROCESSED_PREVIEW:
+            try:
+                self.fs.preview_queue.put((self.processed_state, self.processed_frame), False)
+                self.state = VideoProcessingThread.VP_GETTING_RAW_FRAME
+                return True
+            except:
+                pass
 
     def work_started(self):
         self.state = VideoProcessingThread.VP_GETTING_RAW_FRAME
@@ -357,7 +373,7 @@ class FrameStream(object):
 
     def start(self, single_shot = False):
         self.single_shot = single_shot
-        
+
         # If IDLE just wake the threads and set active to true if it is not
         if self.state == FrameStream.STATE_IDLE:
             if self.single_shot:
@@ -424,11 +440,7 @@ class FrameStream(object):
             # Seek the Video Source
             vs.seek(pos)
             app.post_message("frame_stream_sought", {"pos": pos}, self.m_id)
-            app = get_app()
-            input_plugin = engine.get_input_plugin()
-            if input_plugin is not None:
-                pid = input_plugin["plugin_id"]
-                p = engine.get_plugin(pid)
+
         except Exception as e:
             print "Seeking raised an error"
             print e.message

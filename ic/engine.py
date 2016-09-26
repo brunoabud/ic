@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from xml.dom import minidom, Node
 import imp
 log = logging.getLogger(__name__)
@@ -52,7 +53,10 @@ def get_input_plugin():
     return Engine._INSTANCE.input_plugin
 
 def init_analysis_plugin(pid):
-    pass
+    return Engine._INSTANCE._init_analysis(pid)
+
+def get_analysis_plugin():
+    return Engine._INSTANCE.analysis_plugin
 
 def close_input_plugin():
     pass
@@ -165,6 +169,37 @@ class Engine(object):
         # retrivied by calling the method get_plugin
         self._loaded_plugins = {}
 
+        self.identifier = get_app().register_message_listener(self)
+
+    def receive_message(self, message_type, message_data, sender):
+        analysis_plugin = None
+        video_source    = get_component("video_source")
+        try:
+            analysis_plugin_info = get_analysis_plugin()
+            if analysis_plugin_info is not None:
+                analysis_plugin = get_plugin(analysis_plugin_info["plugin_id"])
+        except:
+            log.debug("Could not get analysis plugin", exc_info=True)
+
+        if message_type == "frame_stream_sought":
+            if analysis_plugin:
+                try:
+                    analysis_plugin.instance.on_media_sought(state=video_source.source_state())
+                except:
+                    log.error("Error when calling plugin media_sought callback", exc_info=True)
+        elif message_type == "video_source_opened":
+            if analysis_plugin:
+                try:
+                    analysis_plugin.instance.on_media_opened(video_source.source_state())
+                except:
+                    log.error("Error when calling plugin media_sought callback", exc_info=True)
+        elif message_type == "video_source_closed":
+            if analysis_plugin:
+                try:
+                    analysis_plugin.instance.on_media_closed(video_source.source_state())
+                except:
+                    log.error("Error when calling plugin media_sought callback", exc_info=True)
+
     def _list_plugins(self, plugin_type = PLUGIN_TYPE_ANY):
         join = os.path.join
         listdir = os.listdir
@@ -198,7 +233,7 @@ class Engine(object):
                 #The correspondent plugin_type value for each node Name
                 type_list = {
                     "VideoInput" : PLUGIN_TYPE_VIDEO_INPUT,
-                    "VideoAnalysisModule" : PLUGIN_TYPE_ANALYSIS,
+                    "VideoAnalysis" : PLUGIN_TYPE_ANALYSIS,
                     "Filter": PLUGIN_TYPE_FILTER
                     }
 
@@ -352,8 +387,52 @@ class Engine(object):
         except:
             log.error("Could not init input plugin", exc_info=True)
 
-    def _init_analysis(self, pid):
-        pass
+    def _init_analysis(self, plugin_id):
+        try:
+            # Get the plugin object
+            plugin = self._get_plugin(plugin_id)
+
+            # Close the current analysis plugin
+            if self.analysis_plugin:
+                current_id     = self.analysis_plugin["plugin_id"]
+                current_plugin = self._get_plugin(current_id)
+
+                # Release the plugin
+                try:
+                    current_plugin.instance.release()
+                except:
+                    log.debug("Error when releasing plugin", exc_info=True)
+
+                # Release the plugin interface
+                try:
+                    current_plugin.gui_interface.release()
+                except:
+                    log.error("Error when releasing plugin GUI interface", exc_info=True)
+
+                self.analysis_plugin = None
+
+            # Create a GUI interface and initialize the plugin
+            gui_interface = GUI_Interface(plugin_id)
+
+            try:
+                if plugin.instance.init_plugin(gui_interface=gui_interface):
+                    plugin.gui_interface = gui_interface
+                    self.analysis_plugin = {"plugin_id": plugin_id}
+                    # Check if there is a media opened to inform the analysis plugin
+                    video_source = get_component("video_source")
+                    try:
+                        plugin.instance.on_media_opened(video_source.source_state())
+                    except sys.modules["ic.video_source"].SourceClosedError:
+                        pass
+                    except:
+                        raise
+                else:
+                    raise PluginInitError()
+            except:
+                gui_interface.release()
+                raise
+        except:
+            log.error("Could not init analysis plugin", exc_info=True)
 
     def _unload_plugin(self, plugin_id):
         app = get_app()

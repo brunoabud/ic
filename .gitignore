@@ -9,9 +9,6 @@ src/
 # Auto-generated files
 project.pro
 
-# Local doc files
-doc/
-
 # Python compiled files
 *.pyc
 
@@ -20,3 +17,6 @@ tmp/
 
 # Tool used to locate code tags
 find_tags.sh
+
+# Annotations and etc
+notes/

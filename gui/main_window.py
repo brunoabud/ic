@@ -89,9 +89,6 @@ class MainWindow(QMainWindow):
 
     def prompt_analysis_plugin(self, checked):
         ret, selected = PluginDialog.select_type(engine.PLUGIN_TYPE_ANALYSIS)
-        app = get_app()
-        vs = engine.get_component("video_source")
-        fs = engine.get_component("frame_stream")()
         if ret:
             try:
                 pid, plugin = engine.load_plugin(selected)
@@ -157,6 +154,8 @@ class MainWindow(QMainWindow):
         self.pb_add_filter.clicked.connect(self.actn_add_filter.trigger)
         self.actn_add_filter.triggered.connect(self.prompt_filter_plugin)
 
+
+        self.actn_load_analysis_plugin.triggered.connect(self.prompt_analysis_plugin)
 
         self.pb_loop.clicked.connect(self.set_loop)
 
