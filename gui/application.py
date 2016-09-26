@@ -1,11 +1,12 @@
 import sys
 import os
 from Queue import Queue
-import traceback
 from weakref import WeakValueDictionary
 from importlib import import_module
 import imp
 from xml.dom import minidom, SyntaxErr, Node
+import logging
+log = logging.getLogger(__name__)
 
 from PyQt4 import uic
 from PyQt4.QtCore import QTimer, QTranslator, Qt, QEvent
@@ -58,15 +59,10 @@ class Application(object):
     # processed by the analysis plugin
     OPT_PREVIEW_POST_ANALYSIS = 0x3
 
-    # Plugin type constants
-    PLUGIN_TYPE_ANY            = 0x0
-    PLUGIN_TYPE_VIDEO_INPUT    = 0x1
-    PLUGIN_TYPE_ANALYSIS       = 0x2
-    PLUGIN_TYPE_FILTER         = 0x3
-
     def __init__(self, argv):
         # Assert that there is no previous created instance
         assert Application._INSTANCE is None
+
         # Set this instance to the singleton _INSTANCE constant
         Application._INSTANCE = self
 
@@ -94,6 +90,7 @@ class Application(object):
             'lang_dir' : pjoin(self.PATH, 'lang')
         }
 
+
         # This dictionary holds all the ui files loaded by calling the method
         # load_ui. They can be retrived by calling the method get_ui
         self._loaded_ui_objects = {}
@@ -108,21 +105,10 @@ class Application(object):
         self._message_listeners = WeakValueDictionary()
         # The timer that will be responsible for dispatching the messages
         self._message_timer = QTimer()
+        self._message_timer.setInterval(20)
         # Connect the timeout signal to the method responsible for dispatching
         # the messages in the queue
         self._message_timer.timeout.connect(self._dispatch_messages)
-
-        # This dictionary holds all the plugin objects loaded using the
-        # load_plugin method, all plugin objects have a unique id. They can be
-        # retrivied by calling the method get_plugin
-        self._loaded_plugins = {}
-
-        # If there is a video input plugin loaded, this member will hold info
-        # about it, like the ui proxy, id and etc.
-        self.video_input_info = None
-
-        # The id of the loaded plugin that does the analysis procedures
-        self.analysis_plugin_info = None
 
         # A dictionary containing options the user can change by interacting with
         # the GUI
@@ -234,13 +220,13 @@ class Application(object):
                     try:
                         instance.setupUi()
                     except:
-                        traceback.print_exc()
+                        log.exception("")
 
                 if hasattr(instance, "retranslateUi"):
                     try:
                         instance.retranslateUi()
                     except:
-                        traceback.print_exc()
+                        log.exception("")
             else:
                 instance = uic.loadUi(ui_path)
 
@@ -249,7 +235,7 @@ class Application(object):
             return instance
         except:
             print "------------------------------------------------------------"
-            traceback.print_exc()
+            log.exception("")
             print "------------------------------------------------------------"
             raise UILoadError()
 
@@ -386,7 +372,7 @@ class Application(object):
                 except:
                     print ("!! A message listener raised an exception when "
                     "receiving a message and will be removed from the list.")
-                    traceback.print_exc()
+                    log.exception("")
                     del self._message_listeners[identifier]
 
     def import_resources(self):
@@ -403,219 +389,6 @@ class Application(object):
                 import_module(m[:-3])
             except:
                 pass
-
-
-    def list_plugins(self, plugin_type = PLUGIN_TYPE_ANY):
-        """Return a list with all the installed plugins of the specified type.
-
-        Parameters
-        ----------
-        plugin_type : int
-            The type of plugin to be listed
-
-        Returns
-        -------
-        list of (type: int, name: str, path: str, info: dict)
-
-        """
-        join = os.path.join
-        listdir = os.listdir
-        isdir = os.path.isdir
-        isfile = os.path.isfile
-
-        #A plugin folder should contain the following structure
-        #
-        #Plugin_Folder -> info.xml
-        #              -> main.py
-        #              -> gui      -> [.ui files only]
-
-        #Get the path to the directory that will contain the plugin folders
-        plugins_path = self.settings["plugins_dir"]
-
-        #List all the folders inside the directory
-        folders = listdir(plugins_path)
-
-        #The list of plugin loadeds
-        plugin_list = []
-
-        #Iterate over the folders and extract the plugin info
-        for folder in folders:
-            full_path = join(plugins_path, folder)
-
-            try:
-                #Open the xml file to extract its info
-                doc = minidom.parse(join(full_path, "info.xml"))
-
-                #The correspondent plugin_type value for each node Name
-                type_list = {
-                    "VideoInput" : Application.PLUGIN_TYPE_VIDEO_INPUT,
-                    "VideoAnalysisModule" : Application.PLUGIN_TYPE_ANALYSIS,
-                    "Filter": Application.PLUGIN_TYPE_FILTER
-                    }
-
-                #Get the tag name of the root element
-                type_tag = doc.documentElement.localName
-                #Go to the next folder if the type is not the specified
-                if (plugin_type != Application.PLUGIN_TYPE_ANY and
-                type_list[type_tag] != plugin_type):
-                    continue
-
-                #List of tags to be extracted
-                tags = ["Title", "Description", "Author", "Version"]
-                #List of text nodes extracted from the xml file
-                infos = {t:
-                [i.nodeValue for i in doc.getElementsByTagName(t)[0].childNodes if
-                i.nodeType == Node.TEXT_NODE][0] for t in tags}
-
-                #(type: int, name: str, path: str, info: dict)
-                plugin_list.append( (type_list[type_tag], folder, full_path, infos) )
-            except SyntaxErr:
-                traceback.print_exc()
-        #Return the list containing the found plugins
-        return plugin_list
-
-    def load_plugin(self, plugin_name):
-        """Load a plugin, give it a unique identifier and return the object.
-
-        Its important to notice that this method only loads the plugin, but not
-        initializes it. To initialize a plugin object, an appropriate method
-        should be called, based on the type of the plugin.
-
-        A VideoInput plugin object will be initialized when the method
-        `set_video_input` is called; a Filter plugin will be initialized
-        when the method `FR_add_filter` is called; a Analysis plugin will be
-        initialized when the method `set_analysis_plugin` is called.
-
-        Parameters
-        ----------
-        plugin_name : str
-            The name of the plugin to be loaded
-
-        Returns
-        -------
-        tuple(plugin_id, plugin)
-
-        plugin_id : int
-            The unique plugin identifier
-
-        plugin : Plugin
-            A Plugin object
-
-        Raises
-        ------
-        ValueError : If the plugin name is not installed
-
-        Exception : Exceptions that may be raised when importing the module
-        """
-
-        # The `Plugin` class holds information about the plugin.
-        # The loaded_ui_objects is a list of the loaded ui objects, but these
-        # ui are those located in the plugin's `ui` dir, and their names are
-        # local to the 'plugin scope', thus they have their own list.
-
-        class Plugin(object):
-            def __init__(self, plugin_type, plugin_name, root_path, instance):
-                self.plugin_type = plugin_type
-                self.plugin_name = plugin_name
-                self.root_path = root_path
-                self.instance = instance
-                self.loaded_ui_objects = {}
-                self.gui_interface = None
-
-        join = os.path.join
-        listdir = os.listdir
-        isdir = os.path.isdir
-        isfile = os.path.isfile
-
-        #A plugin folder should contain the following structure
-        #
-        #Plugin_Folder -> info.xml
-        #              -> main.py
-        #              -> ui      -> [.ui files only]
-
-        #Get a list to the installed plugins
-        plist = self.list_plugins()
-        #Check if the plugin is in the list and get it
-        p = [p_data for p_data in plist if p_data[1] == plugin_name]
-        if not p:
-            raise ValueError("There is no plugin '{}' installed".format(plugin_name))
-
-        #Unpack the data
-        ptype, pname, ppath, pinfo = p[0]
-
-        #Check if there is a main.py file in the root folder
-        main_path = join(ppath, "main.py")
-        if not isfile(main_path):
-            raise IOError("The plugin '{}' doesn't have a main module".format(plugin_name))
-
-        #Load the module containing the main() function and call it to create
-        #the plugin instance
-        instance = None
-        try:
-            with open(main_path, "r") as f:
-                #Load the plugin module
-                plugin_module = imp.load_module("main", f, main_path, (".py", "r", imp.PY_SOURCE))
-                #Call the main method to construct the plugin instance
-                instance = plugin_module.main(ppath)
-        except:
-            raise
-
-        #Create the plugin object that will be hold in the dictionary
-        plugin = Plugin(ptype, pname, ppath, instance)
-        #Find a free id
-        id_ = find_free_key(self._loaded_plugins)
-        #Save it to the dictionary and return the plugin object
-        self._loaded_plugins[id_] = plugin
-
-        self.post_message("plugin_loaded",
-            {"id": id_, "type": plugin.plugin_type,
-            "plugin": plugin}, -1)
-
-        return (id_, plugin)
-
-    def unload_plugin(self, plugin_id):
-        """Unload a previously loaded plugin.
-
-        Parameters
-        ----------
-        plugin_id : int
-            The id of the plugin to be unloaded
-
-        Raises
-        ------
-        ValueError : If the plugin_id is invalid
-        """
-        if plugin_id in self._loaded_plugins:
-            #The the Plugin instance
-            plugin = self._loaded_plugins[plugin_id]
-            #Call the plugins release method
-            plugin.instance.release()
-            #Post a message signaling that the plugin is about to be unloaded
-            self.post_message("plugin_unloaded",
-                {"id": id_, "type": plugin.plugin_type,
-                "plugin": plugin}, -1)
-            #Delete from the list
-            del self._loaded_plugins[plugin_id]
-        else:
-            raise ValueError("No plugin with id '{}'".format(plugin_id))
-
-    def get_plugin(self, plugin_id):
-        """Return a the Plugin object correspondent to given id.
-
-        Parameters
-        ----------
-        plugin_id : int
-            The id of the plugin to be unloaded
-
-        Raises
-        ------
-        ValueError : If the plugin_id is invalid.
-
-        """
-        if plugin_id in self._loaded_plugins:
-            return self._loaded_plugins[plugin_id]
-        else:
-            raise ValueError("No plugin with id '{}'".format(plugin_id))
 
     def load_plugin_ui(self, plugin_id, name, ui_file, base_instance = None):
         """Load a ui_file from the `ui` directory of the given plugin id.
@@ -657,7 +430,8 @@ class Application(object):
 
         UILoadError : If the `uic` module raises any exception
         """
-        plugin = self.get_plugin(plugin_id)
+        engine = sys.modules["ic.engine"]
+        plugin = engine.get_plugin(plugin_id)
 
         #Check if there is a loaded ui with the given name
         if name in plugin.loaded_ui_objects:
@@ -693,22 +467,20 @@ class Application(object):
                     try:
                         instance.setupUi()
                     except:
-                        traceback.print_exc()
+                        log.exception("")
 
                 if hasattr(instance, "retranslateUi"):
                     try:
                         instance.retranslateUi()
                     except:
-                        traceback.print_exc()
+                        log.exception("")
             else:
                 instance = uic.loadUi(ui_path)
 
             plugin.loaded_ui_objects[name] = instance
             return instance
         except:
-            print "------------------------------------------------------------"
-            traceback.print_exc()
-            print "------------------------------------------------------------"
+            log.exception("")
             raise UILoadError()
 
     def get_plugin_ui(self, plugin_id, name):
@@ -734,7 +506,8 @@ class Application(object):
         KeyError : If there is no ui object with the given name.
 
         """
-        plugin = self.get_plugin(plugin_id)
+        engine = sys.modules["ic.engine"]
+        plugin = engine.get_plugin(plugin_id)
         if name not in plugin.loaded_ui_objects:
             raise KeyError("There is no ui object with name '{}'".format(name))
         else:
@@ -757,6 +530,7 @@ class Application(object):
             "default" and if so, the current translator will be removed and the
             language will be send to default.
         """
+        engine = sys.modules["ic.engine"]
         join = os.path.join
         isfile = os.path.isfile
 
@@ -786,16 +560,16 @@ class Application(object):
                     try:
                         ui.retranslateUi()
                     except:
-                        traceback.print_exc()
+                        log.exception("")
 
             #Translate the loaded ui objects of the plugins
-            for plugin in self._loaded_plugins.values():
+            for plugin in engine.loaded_plugins().values():
                 for ui in plugin.loaded_ui_objects:
                     if hasattr(ui, "retranslateUi"):
                         try:
                             ui.retranslateUi()
                         except:
-                            traceback.print_exc()
+                            log.exception("")
 
                 if plugin.gui_interface is not None:
                     plugin.gui_interface.retranslateUi()

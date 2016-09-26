@@ -24,7 +24,7 @@ class FilterRack(object):
 
     def receive_message(self, mtype, mdata, sender):
         if mtype == "plugin_unloaded":
-            if mdata["id"] in self.id_list:
+            if mdata["id"] in self.id_list():
                 self.remove(mdata["id"])
 
 

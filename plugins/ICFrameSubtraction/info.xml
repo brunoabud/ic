@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<VideoAnalysis>
+    <Title>Imagem Cinemática - Frame Subtraction</Title>
+    <Author>Imagem Cinemática</Author>
+    <Description>Applies frame subtraction to detect movement.</Description>
+    <Version>1.0.0</Version>
+</VideoAnalysis>

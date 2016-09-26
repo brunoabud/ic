@@ -571,7 +571,7 @@
   </action>
   <action name="actn_load_analysis_plugin">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../res/ic_resources.qrc">

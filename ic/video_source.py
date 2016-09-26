@@ -1,21 +1,14 @@
-import traceback
+import logging
+log = logging.getLogger(__name__)
 import types
 
 from gui.application import get_app, Application
 from gui.gui_interface import GUI_Interface
 
-def get_vs():
-    """Return the singleston instance of the VideoSource class."""
-    return VideoSource._INSTANCE
 
 # Raised when attempting to access a closed Video Source
-class SourceClosedError(object):
+class SourceClosedError(Exception):
     pass
-
-# Exception raised when a plugin could not be initialized
-class PluginInitError(Exception):
-    pass
-
 
 # Class that exposes the _open and _close methods of the VideoSource instance.
 # The input plugins will receive this bridge to signal that a video source is
@@ -135,7 +128,7 @@ class VideoSource(object):
 
     def is_open(self):
         return self._source_open
-
+'''
     def set_video_input(self, plugin_id):
         """Sets the current Video Input Plugin.
 
@@ -157,13 +150,13 @@ class VideoSource(object):
             try:
                 current_plugin.instance.close_plugin()
             except:
-                traceback.print_exc()
+                log.error("Error when closing the plugin", exc_info=True)
             #Release the gui interface
             try:
                 current_plugin.gui_interface.release()
                 current_plugin.gui_interface = None
             except:
-                traceback.print_exc()
+                log.error("Error when releasing the gui interface", exc_info=True)
             #Clean the input plugin info
             del app.video_input_info
             #Close the VideoSource bridge
@@ -188,9 +181,8 @@ class VideoSource(object):
                 interface.release()
                 raise PluginInitError("init_plugin returned False")
         except:
-            print "_-----------------------------------------------------------"
-            traceback.print_exc()
-            print "------------------------------------------------------------"
+            log.error("Error when initialiazing input plugin", exc_info=True)
             raise PluginInitError("Plugin init. raised exception")
             interface.release()
             self.close_bridge()
+'''

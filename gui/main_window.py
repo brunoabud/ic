@@ -2,7 +2,9 @@
 import sys
 import os
 from os.path import join as pjoin
-import traceback
+import logging
+log = logging.getLogger(__name__)
+
 
 from PyQt4.QtGui import QMainWindow, QMessageBox, QDialog, QTextCursor, QFrame
 from PyQt4.QtGui import QActionGroup, QLabel, QIcon, QInputDialog
@@ -13,11 +15,10 @@ import cv2
 
 from application import get_app, Application
 from gui import tr
-from ic.video_source import get_vs
-from ic.frame_stream import get_fs
 from gui.plugin_dialog import PluginDialog
 from gui.playback import Playback
 from gui.filter_ui import FilterUI
+from ic import engine
 
 class MainWindow(QMainWindow):
     def __init__(self, parent = None):
@@ -35,8 +36,7 @@ class MainWindow(QMainWindow):
             locale_str = str(action.property("locale_str").toString())
             get_app().set_language(locale_str)
         except:
-            import traceback
-            traceback.print_exc()
+            log.exception("")
             QMessageBox.warning(None, tr("MainWindow", "Language Error"),
 
             tr("MainWindow",
@@ -53,27 +53,19 @@ class MainWindow(QMainWindow):
             app.user_options["preview_source"] = app.OPT_PREVIEW_POST_ANALYSIS
 
     def prompt_input_plugin(self, checked):
-        ret, selected = PluginDialog.select_type(Application.PLUGIN_TYPE_VIDEO_INPUT)
+        ret, selected = PluginDialog.select_type(engine.PLUGIN_TYPE_VIDEO_INPUT)
         app = get_app()
-        vs = get_vs()
 
         if ret:
             try:
-                pid = app.load_plugin(selected)
-                vs.set_video_input(pid[0])
+                pid, plugin = engine.load_plugin(selected)
+                engine.init_input_plugin(pid)
             except:
-                import traceback
-                traceback.print_exc()
+                log.exception("")
                 QMessageBox.warning(None, tr("MainWindow", "Plugin Load Error"),
                 tr("MainWindow", "Got an error when trying to load the input plugin"))
 
         return
-
-        text, ret = QInputDialog.getText(None,
-        tr("MainWindow", "Load Input Plugin"), caption.arg(list_str))
-
-        if ret == True:
-            get_vs().set_video_input(app.load_plugin(text)[0])
 
     def update_filter_uis(self):
         layout = self.filter_rack_contents.layout()
@@ -86,7 +78,7 @@ class MainWindow(QMainWindow):
     def add_filter_gui(self, pid, plugin):
         app = get_app()
         name = plugin.plugin_name
-        info = [i[3] for i in app.list_plugins() if i[1] == name][0]
+        info = [i[3] for i in engine.list_plugins() if i[1] == name][0]
 
         # Create the widget
         ui = FilterUI(pid, name, info["Title"])
@@ -95,32 +87,44 @@ class MainWindow(QMainWindow):
 
         self.update_filter_uis()
 
-    def prompt_filter_plugin(self, checked):
-        ret, selected = PluginDialog.select_type(Application.PLUGIN_TYPE_FILTER)
+    def prompt_analysis_plugin(self, checked):
+        ret, selected = PluginDialog.select_type(engine.PLUGIN_TYPE_ANALYSIS)
         app = get_app()
-        vs = get_vs()
-        fs = get_fs()
+        vs = engine.get_component("video_source")
+        fs = engine.get_component("frame_stream")()
         if ret:
             try:
-                pid, plugin = app.load_plugin(selected)
-                fs.filter_rack.add(pid)
+                pid, plugin = engine.load_plugin(selected)
+                engine.init_analysis_plugin(pid)
+            except:
+                log.exception("")
+                QMessageBox.warning(None, tr("MainWindow", "Plugin Load Error"),
+                tr("MainWindow", "Got an error when trying to load the analysis plugin"))
+
+        return
+
+
+    def prompt_filter_plugin(self, checked):
+        ret, selected = PluginDialog.select_type(engine.PLUGIN_TYPE_FILTER)
+        app = get_app()
+        vs = engine.get_component("video_source")
+        fs = engine.get_component("frame_stream")
+        if ret:
+            try:
+                pid, plugin = engine.load_plugin(selected)
+                engine.get_component("filter_rack").add(pid)
                 # Create the GUI
                 self.add_filter_gui(pid, plugin)
             except:
-                traceback.print_exc()
+                log.exception("")
                 QMessageBox.warning(None, tr("MainWindow", "Plugin Load Error"),
                 tr("MainWindow", "Got an error when trying to load the filter plugin"))
 
         return
 
-        text, ret = QInputDialog.getText(None,
-        tr("MainWindow", "Load Input Plugin"), caption.arg(list_str))
-
-        if ret == True:
-            get_vs().set_video_input(app.load_plugin(text)[0])
 
     def set_loop(self, loop):
-        get_fs().loop = loop
+        engine.get_component("frame_stream").loop = loop
 
     def setupUi(self):
         # Create the Playback object that will take care of the preview and
@@ -152,6 +156,8 @@ class MainWindow(QMainWindow):
 
         self.pb_add_filter.clicked.connect(self.actn_add_filter.trigger)
         self.actn_add_filter.triggered.connect(self.prompt_filter_plugin)
+
+
         self.pb_loop.clicked.connect(self.set_loop)
 
     def receive_message(self, mtype, mdata, sender_id):

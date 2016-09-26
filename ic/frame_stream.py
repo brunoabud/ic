@@ -6,14 +6,10 @@ from PyQt4.QtCore import QThread, pyqtSlot, pyqtSignal, QMutex, QWaitCondition
 
 from ic.queue import Queue
 from gui.application import get_app, Application
-from ic.video_source import get_vs
 from ic.filter_rack import FilterRack
 from ic.queue import Empty, Full
-
-def get_fs():
-    """Return the singleton instance of the FrameStream class."""
-    return FrameStream._INSTANCE
-
+from ic import engine
+from ic.video_source import SourceClosedError
 
 class FSWorkerThread(QThread):
     """Base class for FrameStream worker threads.
@@ -84,9 +80,7 @@ class FSWorkerThread(QThread):
                 # Do the damn work
                 self.work_done = self.do_work()
             except:
-                print "--------------------------------------------------------"
-                tb.print_exc()
-                print "--------------------------------------------------------"
+                log.error("Error when doing work", exc_info=True)
                 self.error_flag = True
 
             # Give her a break, poor girl
@@ -120,7 +114,7 @@ class VideoInputThread(FSWorkerThread):
         if self.state == VideoInputThread.VI_GETTING_RAW_FRAME:
             try:
                 app = get_app()
-                vs  = get_vs()
+                vs  = engine.get_component("video_source")
 
                 self.frame_state = {"pos": vs.tell(), "fps": vs.get_fps()}
                 self.raw_frame = vs.next()
@@ -131,7 +125,9 @@ class VideoInputThread(FSWorkerThread):
                 if self.fs.loop:
                     vs.seek(0)
                 else:
-                    raise
+                    self.error_flag = True
+            except SourceClosedError:
+                self.error_flag = True
             except:
                 raise
 
@@ -184,7 +180,6 @@ class VideoProcessingThread(FSWorkerThread):
             except Empty:
                 pass
 
-
         if self.state == VideoProcessingThread.VP_PUTTING_RAW_PREVIEW:
             try:
                 if get_app().user_options["preview_source"] == Application.OPT_PREVIEW_RAW:
@@ -197,7 +192,7 @@ class VideoProcessingThread(FSWorkerThread):
 
         if self.state == VideoProcessingThread.VP_FILTERING:
             self.filtered_frame = self.raw_frame
-            for filter_element in self.fs.filter_rack:
+            for filter_element in engine.get_component("filter_rack"):
                 if filter_element.ignore:
                     continue
                 try:
@@ -205,7 +200,7 @@ class VideoProcessingThread(FSWorkerThread):
                     plugin = app.get_plugin(filter_element.fid)
                     self.filtered_frame = plugin.instance.apply_filter(self.filtered_frame)
                 except:
-                    self.fs.filter_rack.set_ignore(filter_element.fid, True)
+                    engine.get_component("filter_rack").set_ignore(filter_element.fid, True)
             self.state = VideoProcessingThread.VP_PUTTING_FILTERED_PREVIEW
 
         if self.state == VideoProcessingThread.VP_PUTTING_FILTERED_PREVIEW:
@@ -297,10 +292,6 @@ class FrameStream(object):
 
         self.state = FrameStream.STATE_WAITING_TO_STOP
 
-        # A Filter Rack object that will hold a list of plugin ids that will be
-        # applied to the frames in the processing stage
-        self.filter_rack = FilterRack()
-
         # If True, the frame stream will seek the video source to 0 when it
         # reaches the last frame
         self.loop = True
@@ -364,7 +355,9 @@ class FrameStream(object):
     def unfreeze(self):
         pass
 
-    def start(self):
+    def start(self, single_shot = False):
+        self.single_shot = single_shot
+        
         # If IDLE just wake the threads and set active to true if it is not
         if self.state == FrameStream.STATE_IDLE:
             if self.single_shot:
@@ -408,7 +401,7 @@ class FrameStream(object):
             self.active = False
 
     def seek(self, pos):
-        vs = get_vs()
+        vs = engine.get_component("video_source")
         app = get_app()
 
         # If the thread is waiting to start, wait it to start or stop
@@ -424,11 +417,18 @@ class FrameStream(object):
         self.preview_queue._clear()
         self.raw_queue._clear()
 
-        self._input_thread.work_started()
-        self._processor_thread.work_started()
         try:
+            # Reset workers states
+            self._input_thread.work_started()
+            self._processor_thread.work_started()
+            # Seek the Video Source
             vs.seek(pos)
             app.post_message("frame_stream_sought", {"pos": pos}, self.m_id)
+            app = get_app()
+            input_plugin = engine.get_input_plugin()
+            if input_plugin is not None:
+                pid = input_plugin["plugin_id"]
+                p = engine.get_plugin(pid)
         except Exception as e:
             print "Seeking raised an error"
             print e.message

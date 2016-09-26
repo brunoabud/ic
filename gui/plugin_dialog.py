@@ -5,8 +5,10 @@ from PyQt4.QtGui import QGridLayout, QFont, QDialog, QDialogButtonBox
 from PyQt4.QtCore import QSize
 from PyQt4 import uic
 
-from application import get_app, Application
+from application import get_app
 from gui import tr
+from ic import engine
+
 
 class ListPlugin(QListWidget):
     def __init__(self, parent = None):
@@ -28,9 +30,9 @@ class ListPlugin(QListWidget):
 
 class PluginDialog(QDialog):
     @staticmethod
-    def select_type(plugin_type = Application.PLUGIN_TYPE_ANY):
+    def select_type(plugin_type = engine.PLUGIN_TYPE_ANY):
         app = get_app()
-        plugins = app.list_plugins(plugin_type)
+        plugins = engine.list_plugins(plugin_type)
         dialog = PluginDialog()
         dialog.list_plugins.populate(plugins)
         return (dialog.exec_() == 1, dialog.selected)

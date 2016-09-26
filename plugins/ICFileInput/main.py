@@ -3,7 +3,8 @@ import sys
 import os
 from xml.dom import Node, minidom
 from xml.dom.minidom import Document
-import traceback
+import logging
+log = logging.getLogger("ICFileInput")
 
 from PyQt4.QtGui import QFileDialog, QMessageBox, QPushButton, QGridLayout, QWidget
 from PyQt4.QtGui import QLabel, QInputDialog
@@ -27,11 +28,12 @@ try:
     probe = ffmpy.FFprobe(global_options="-version")
     probe.run()
     info_source = INFO_FROM_FFPROBE
+    log.info("Using ffprobe to get media info")
 except ImportError:
-    print "ffmpy library not found, using OpenCV methods for getting media info"
+    log.warning("ffmpy library not found, using OpenCV methods for getting media info")
     info_source = INFO_FROM_OPENCV
 except ffmpy.FFExecutableNotFoundError:
-    print "ffprobe executable not found, using OpenCV methods for getting media info"
+    log.warning("ffprobe executable not found, using OpenCV methods for getting media info")
     info_source = INFO_FROM_OPENCV
 
 def get_info_ffprobe(path):
@@ -100,6 +102,7 @@ class ICFileInput(object):
     MAX_RECENT_FILES = 5
 
     def __init__(self, plugin_path):
+        self.log = logging.getLogger("plugin.ICFileInput")
         self.plugin_path = plugin_path
 
         # Media state

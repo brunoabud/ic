@@ -7,9 +7,8 @@ from PyQt4.QtGui import QAbstractSlider
 from PyQt4 import uic
 
 from gui.application import get_app
-from ic.frame_stream import get_fs
 from gui import tr
-
+from ic import engine
 
 
 class FilterUI(QFrame):
@@ -35,7 +34,7 @@ class FilterUI(QFrame):
         self.pb_ignore.clicked.connect(self.pb_ignore_clicked)
 
     def update_buttons(self):
-        filter_rack = get_fs().filter_rack
+        filter_rack = engine.get_component("filter_rack")
         self.pb_up.setEnabled(not filter_rack.is_first(self.fid))
         self.pb_down.setEnabled(not filter_rack.is_last(self.fid))
         self.pb_ignore.setChecked(filter_rack.is_ignored(self.fid))
@@ -67,7 +66,7 @@ class FilterUI(QFrame):
 
     def populate_parameters(self):
         app = get_app()
-        filter_rack = get_fs().filter_rack
+        filter_rack = engine.get_component("filter_rack")
 
         plugin = app.get_plugin(self.fid)
 
@@ -75,13 +74,13 @@ class FilterUI(QFrame):
             self.add_parameter(name, plugin.instance.parameters[name], plugin.instance.parameter_change)
 
     def pb_up_clicked(self):
-        get_fs().filter_rack.up(self.fid)
+        engine.get_component("filter_rack").up(self.fid)
 
     def pb_down_clicked(self):
-        get_fs().filter_rack.down(self.fid)
+        engine.get_component("filter_rack").down(self.fid)
 
     def pb_remove_clicked(self):
-        get_fs().filter_rack.remove(self.fid)
-
+        engine.get_component("filter_rack").remove(self.fid)
+        get_app().unload_plugin(self.fid)
     def pb_ignore_clicked(self, checked):
-        get_fs().filter_rack.ignore(self.fid, checked)
+        engine.get_component("filter_rack").ignore(self.fid, checked)

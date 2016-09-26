@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 from PyQt4.QtGui import QScrollArea, QDial, QSlider, QScrollBar, QBoxLayout
 from PyQt4.QtGui import QWidget, QLabel
 from PyQt4.QtCore import Qt
@@ -264,7 +267,4 @@ class GUI_Interface(object):
             try:
                 param._title.setText(tr("GUI_Interface", param._native_title))
             except:
-                import traceback
-                print "--------------------------------------------------------"
-                traceback.print_exc()
-                print "--------------------------------------------------------"
+                log.error("", exc_info=True)

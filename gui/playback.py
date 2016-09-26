@@ -7,10 +7,8 @@ from PyQt4.QtGui import QIcon, QPixmap, QImage
 import cv2
 
 from application import get_app
-from ic.video_source import get_vs
-from ic.frame_stream import get_fs
 from ic.queue import Empty
-
+from ic import engine
 
 class Playback(object):
     """Class that controls the Playback GUI and manages the FrameStream states.
@@ -47,7 +45,7 @@ class Playback(object):
         self.wait_to_seek = True
 
     def seek(self):
-        fs = get_fs()
+        fs = engine.get_component("frame_stream")
         fs.seek(self.main_window.scb_pos.sliderPosition())
         self.wait_to_seek = True
         self.preview_timer.start()
@@ -62,10 +60,10 @@ class Playback(object):
         elif mtype == "frame_stream_stopped":
             self._pause()
         elif mtype == "frame_stream_sought":
-            self.wait_to_seek = False
+            pass
 
     def _format_pos(self, pos, fps = None):
-        vs = get_vs()
+        vs = engine.get_component("video_source")
         length = vs.get_length()
         str_size = len(str(length))
         format_str = "{:0"+str(str_size)+"d}"
@@ -82,11 +80,16 @@ class Playback(object):
         mw.scb_pos.setRange(0, 0)
 
         mw.pb_play.setChecked(False)
-        mw.pb_play.setIcon(QIcon(":icon/pause"))
+        mw.pb_play.setIcon(QIcon(":icon/play"))
+
+        fs = engine.get_component("frame_stream")
+        fs.start(True)
+        self.wait_to_seek = True
+        self.preview_timer.start()
 
     def _update_gui(self, pos = 0):
         mw = self.main_window
-        vs = get_vs()
+        vs = engine.get_component("video_source")
 
         mw.frm_playback.setEnabled(True)
         mw.scb_pos.setRange(0, vs.get_length() - 1)
@@ -105,36 +108,37 @@ class Playback(object):
     def _set_pos(self, pos):
         mw = self.main_window
         mw.scb_pos.setValue(pos)
-        mw.lbl_current.setText(self._format_pos(pos, get_vs().get_fps()))
+        mw.lbl_current.setText(self._format_pos(pos, engine.get_component("video_source").get_fps()))
 
     def update_preview(self):
+        interval = 0
         try:
             mw = self.main_window
-            fs = get_fs()
+            fs = engine.get_component("frame_stream")
             preview_queue = fs.preview_queue
 
             # Dont pull frames if the user is seeking
             if not mw.scb_pos.isSliderDown():
-                if not self.wait_to_seek:
-                    state, frame = preview_queue.get(False)
-                    self._set_pos(state["pos"])
+                state, frame = preview_queue.get(False)
+                self._set_pos(state["pos"])
 
-                    # Convert and show the frame
-                    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    # Create a QImage with the frame data
-                    img = QImage(rgb.tostring(), rgb.shape[1], rgb.shape[0], QImage.Format_RGB888)
-                    # Create and show the Pixmap
-                    pixmap = QPixmap(img)
-                    self.main_window.lbl_preview.setPixmap(pixmap)
+                # Convert and show the frame
+                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                # Create a QImage with the frame data
+                img = QImage(rgb.tostring(), rgb.shape[1], rgb.shape[0], QImage.Format_RGB888)
+                # Create and show the Pixmap
+                pixmap = QPixmap(img)
+                self.main_window.lbl_preview.setPixmap(pixmap)
+                self.wait_to_seek = False
         except Empty:
-            pass
+            interval = 0
 
-        if self.main_window.pb_play.isChecked():
-            self.preview_timer.start(0)
+        if self.main_window.pb_play.isChecked() or self.wait_to_seek:
+            self.preview_timer.start(interval)
 
     def pb_play_clicked(self, checked):
         app = get_app()
-        fs = get_fs()
+        fs = engine.get_component("frame_stream")
 
         if checked:
             fs.start()
