@@ -68,7 +68,7 @@ class FilterUI(QFrame):
         app = get_app()
         filter_rack = engine.get_component("filter_rack")
 
-        plugin = app.get_plugin(self.fid)
+        plugin = engine.get_plugin(self.fid)
 
         for name in plugin.instance.parameters:
             self.add_parameter(name, plugin.instance.parameters[name], plugin.instance.parameter_change)
@@ -81,6 +81,6 @@ class FilterUI(QFrame):
 
     def pb_remove_clicked(self):
         engine.get_component("filter_rack").remove(self.fid)
-        get_app().unload_plugin(self.fid)
+        engine.unload_plugin(self.fid)
     def pb_ignore_clicked(self, checked):
         engine.get_component("filter_rack").ignore(self.fid, checked)

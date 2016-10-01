@@ -197,14 +197,16 @@ class VideoProcessingThread(FSWorkerThread):
                     continue
                 try:
                     app = get_app()
-                    plugin = app.get_plugin(filter_element.fid)
+                    plugin = engine.get_plugin(filter_element.fid)
                     self.filtered_frame = plugin.instance.apply_filter(self.filtered_frame)
                 except:
-                    engine.get_component("filter_rack").set_ignore(filter_element.fid, True)
+                    engine.get_component("filter_rack").ignore(filter_element.fid, True)
             self.state = VideoProcessingThread.VP_PUTTING_FILTERED_PREVIEW
 
         if self.state == VideoProcessingThread.VP_PUTTING_FILTERED_PREVIEW:
-            if get_app().user_options["preview_source"] == Application.OPT_PREVIEW_POST_FILTER:
+            if get_app().user_options["preview_source"] == Application.OPT_PREVIEW_POST_FILTER or\
+            (get_app().user_options["preview_source"] == Application.OPT_PREVIEW_POST_ANALYSIS and
+            engine.get_analysis_plugin() is None):
                 try:
                     self.fs.preview_queue.put((self.frame_state, self.filtered_frame), False)
                     self.state = VideoProcessingThread.VP_PROCESSING
@@ -214,7 +216,12 @@ class VideoProcessingThread(FSWorkerThread):
                 self.state = VideoProcessingThread.VP_PROCESSING
 
         if self.state == VideoProcessingThread.VP_PROCESSING:
-            plugin = engine.get_plugin(engine.get_analysis_plugin()["plugin_id"]).instance
+            try:
+                plugin = engine.get_plugin(engine.get_analysis_plugin()["plugin_id"]).instance
+            except:
+                # There is no analysis plugin loaded so ignore it
+                self.state = VideoProcessingThread.VP_GETTING_RAW_FRAME
+                return True
 
             self.processed_state, self.processed_frame = plugin.process_frame(self.filtered_frame, self.frame_state)
             if get_app().user_options["preview_source"] == Application.OPT_PREVIEW_POST_ANALYSIS:

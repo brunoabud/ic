@@ -98,6 +98,12 @@ class Analyzer(object):
         for frameskip in range(params["skip"], self.max_frameskip + 1):
             last_frame, last_frame_state = self.buffer.queue[frameskip + 1]
             x, y, new_frame, new_frame_state = self.analyze_pos(last_frame, last_frame_state, frameskip, params)
+            for i in xrange(0, self.time.shape[0]):
+                if self.data_x[i] is not np.nan and self.data_y[i] is not np.nan:
+                    try:
+                        new_frame = cv2.circle(new_frame, (int(self.data_x[i]), int(self.data_y[i])), 2, (0, 0, 255, 20), 1)
+                    except:
+                        pass
             if all((x, y)):
                 self.buffer.queue.popleft()
                 new_frame = cv2.circle(new_frame, (x, y), 8, (255, 0, 0), 2)
@@ -108,15 +114,14 @@ class Analyzer(object):
                 self.time[frame_state["pos"]]   = frame_state["pos"]
                 self.line_x.set_data(self.time, self.data_x)
                 self.line_y.set_data(self.time, self.data_y)
-
-                for i in xrange(0, frame_state["pos"]):
-                    if self.data_x[i] is not np.nan and self.data_y[i] is not np.nan:
-                        try:
-                            new_frame = cv2.circle(new_frame, (int(self.data_x[i]), int(self.data_y[i])), 2, (0, 0, 255, 20), 1)
-                        except:
-                            pass
                 return new_frame_state, new_frame
         # If nothing was found, return the given frame and state
+        for i in xrange(0, self.time.shape[0]):
+            if self.data_x[i] is not np.nan and self.data_y[i] is not np.nan:
+                try:
+                    frame = cv2.circle(frame, (int(self.data_x[i]), int(self.data_y[i])), 2, (0, 0, 255, 20), 1)
+                except:
+                    pass
         return frame_state, frame
 
 class PlotCanvas(FigureCanvas):

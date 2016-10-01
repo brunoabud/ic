@@ -342,7 +342,7 @@ class Engine(object):
             # Close the current input plugin if there is one
             if self.input_plugin is not None:
                 current_id = self.input_plugin["plugin_id"]
-                current_plugin = app.get_plugin(current_id)
+                current_plugin = get_plugin(current_id)
 
                 #Call the plugin close method
                 try:

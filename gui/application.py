@@ -113,7 +113,7 @@ class Application(object):
         # A dictionary containing options the user can change by interacting with
         # the GUI
         self.user_options = {
-            "preview_source": Application.OPT_PREVIEW_RAW
+            "preview_source": Application.OPT_PREVIEW_POST_ANALYSIS
             }
 
         #Current installed translator
@@ -382,6 +382,9 @@ class Application(object):
         #Get the path to the `gui` package, where the resource files will be
         #located
         _1, path, _3 = imp.find_module("gui")
+
+        if path not in sys.path:
+            sys.path.append(path)
 
         #Import all the files that end with `_rc.py`
         for m in [f for f in os.listdir(path) if f.endswith("_rc.py")]:

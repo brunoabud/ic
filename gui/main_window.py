@@ -94,6 +94,8 @@ class MainWindow(QMainWindow):
                 pid, plugin = engine.load_plugin(selected)
                 engine.init_analysis_plugin(pid)
             except:
+            	mensagem = "Ola"
+            	tr("MainWindow", mensagem)
                 log.exception("")
                 QMessageBox.warning(None, tr("MainWindow", "Plugin Load Error"),
                 tr("MainWindow", "Got an error when trying to load the analysis plugin"))

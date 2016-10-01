@@ -2,6 +2,7 @@
 ic-img/**
 env/
 src/
+tools/
 
 # Unit test / coverage reports
 *_TestUnity.py
