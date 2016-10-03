@@ -351,7 +351,7 @@ class ICFileInput(object):
                 else:
                     return False
             else:
-                return None
+                return False
         except:
             return False
 
@@ -371,16 +371,16 @@ class ICFileInput(object):
 
     def next(self):
         if not self.is_open:
+            log.error("NOT OPEN")
             return None
 
         if self.pos >= self.length:
             raise EOFError()
 
         ret, frame = self.capture.read()
+        self.pos += 1
         if ret:
-            self.pos += 1
             return frame
-
         else:
             return None
 

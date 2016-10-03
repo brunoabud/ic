@@ -40,6 +40,8 @@ class FSWorkerThread(QThread):
         self.error_flag = False
         self.work_done = False
 
+        self.old_state = self.state
+
     def run(self):
         # Tell the FS that the thread is becoming active
         self.fs._worker_activated()
@@ -116,7 +118,7 @@ class VideoInputThread(FSWorkerThread):
                 app = get_app()
                 vs  = engine.get_component("video_source")
 
-                self.frame_state = {"pos": vs.tell(), "fps": vs.get_fps()}
+                self.frame_state = vs.source_state()
                 self.raw_frame = vs.next()
 
                 if self.raw_frame is not None:
@@ -431,6 +433,7 @@ class FrameStream(object):
         if self.state == FrameStream.STATE_WAITING_TO_START:
             while not self.state == FrameStream.STATE_STARTED or not self.state == FrameStream.STATE_IDLE:
                 pass
+
         # If the workers are running, freeze them and wait to clear the queues
         if self.state == FrameStream.STATE_STARTED:
             self.frozen = True
@@ -449,11 +452,11 @@ class FrameStream(object):
             app.post_message("frame_stream_sought", {"pos": pos}, self.m_id)
 
         except Exception as e:
-            print "Seeking raised an error"
-            print e.message
+            log.error("Seeking raised an error", exc_info=True)
         finally:
-            self.frozen = False
-            self.freeze_condition.wakeAll()
+            if self.frozen:
+                self.frozen = False
+                self.freeze_condition.wakeAll()
 
         if self.state == FrameStream.STATE_IDLE:
             self.single_shot = True
