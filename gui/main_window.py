@@ -286,7 +286,6 @@ class MainWindow(QMainWindow):
         self.menu_preview_source.setTitle(tr("MainWindow", "Preview source", None))
         self.menu_video.setTitle(tr("MainWindow", "Video", None))
         self.menu_analysis.setTitle(tr("MainWindow", "Analysis", None))
-        self.menu_console.setTitle(tr("MainWindow", "Console", None))
         self.toolbar.setWindowTitle(tr("MainWindow", "Toolbar", None))
         self.actn_raw.setText(tr("MainWindow", "Raw", None))
         self.actn_post_filter.setText(tr("MainWindow", "Post-Filter", None))
@@ -299,7 +298,6 @@ class MainWindow(QMainWindow):
         self.actn_exit.setToolTip(tr("MainWindow", "Exit from application", None))
         self.actn_add_filter.setText(tr("MainWindow", "Add Filter", None))
         self.actn_load_analysis_plugin.setText(tr("MainWindow", "Load Analysis Plugin", None))
-        self.actn_show_console.setText(tr("MainWindow", "Show console", None))
         self.actn_lang_en_US.setProperty("locale_str", tr("MainWindow", "default", None))
         self.actn_filter_page.setText(tr("MainWindow", "Filter Page", None))
 

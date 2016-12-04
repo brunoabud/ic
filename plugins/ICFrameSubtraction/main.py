@@ -40,10 +40,6 @@ class Analyzer(object):
         self.axes_x  = None        # X POS Plot
         self.axes_y  = None        # Y POS Plot
 
-        self.writer_y = open("/home/bruno/Desktop/pontos_y.csv", "wb")
-        self.writer_x = open("/home/bruno/Desktop/pontos_x.csv", "wb")
-        self.writer_y.write("Seconds,Centimeters\n")
-        self.writer_x.write("Seconds,Centimeters\n")
     def analyze_pos(self, first, second, params):
         """Analyze the frame buffer with a given frameskip.
 
@@ -109,19 +105,6 @@ class Analyzer(object):
                 self.data_x[frame.pos] = int(x)
                 self.data_y[frame.pos] = int(y)
                 self.time[frame.pos]   = frame.pos
-                try:
-                    try:
-                        if frame.pos < self.last_pos:
-                            self.writer_y.close()
-                            self.writer_x.close()
-                        else:
-                            self.writer_y.write("%f,%f\n" % (frame.pos*(1.0/frame.fps), int(y) ))
-                            self.writer_x.write("%f,%f\n" % (frame.pos*(1.0/frame.fps), int(x) ))
-                            self.last_pos = frame.pos
-                    except:
-                        self.last_pos = frame.pos
-                except:
-                    pass
                 self.line_x.set_data(self.time, self.data_x)
                 self.line_y.set_data(self.time, self.data_y)
                 return processed_frame
@@ -202,8 +185,6 @@ class ICFrameSubtraction(object):
             self.yplot.draw()
             self.last_plot_update = new_frame.pos
 
-        self.video_out.write(new_frame.data)
-
         return new_frame
 
     def on_media_sought(self, state):
@@ -221,13 +202,9 @@ class ICFrameSubtraction(object):
         self.analyzer.axes_x.set_xlim(0, state["length"])
         self.analyzer.axes_y.set_xlim(0, state["length"])
 
-        self.fourcc = cv2.VideoWriter_fourcc(*"WMV2")
-        self.video_out = cv2.VideoWriter("/home/bruno/Desktop/analise.wmv", self.fourcc, state["fps"], state["size"])
-
 
     def on_media_closed():
-        log.debug("on_media_closed")
-        self.video_out.release()
+        pass
 
 def main(plugin_path):
     return ICFrameSubtraction()

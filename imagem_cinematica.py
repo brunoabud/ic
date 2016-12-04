@@ -14,18 +14,26 @@ ERROR_MAIN_MODULE_IMPORT    = 0x002
 ERROR_APPLICATION_INIT      = 0x003
 ERROR_MAIN_WINDOW_LOAD      = 0x004
 
-if __name__ == "__main__":
+def load_logger():
+    # Identify the operational system
     # Init the logging utilities
-    handler   = logging.StreamHandler()
-    formatter = ic.log.ANSIFormatter()
-    root    = logging.getLogger()
+    handler     = logging.StreamHandler()
+    root_logger = logging.getLogger()
     # Setup the handler formater and level
-    handler.setFormatter(formatter)
-    root.addHandler(handler)
+    if sys.platform == "linux2":
+        handler.setFormatter(ic.log.ANSIFormatter())
+    else:
+        handler.setFormatter(ic.log.ColorlessFormatter())
+    root_logger.addHandler(handler)
     handler.setLevel(logging.DEBUG)
-    root.setLevel(logging.NOTSET)
+    root_logger.setLevel(logging.NOTSET)
     # Filter out the PyQt4 logging messages
     handler.addFilter(ic.log.NameFilter("PyQt4"))
+
+if __name__ == "__main__":
+    load_logger()
+
+
 
     log = logging.getLogger(__name__)
 
