@@ -72,73 +72,60 @@ QPushButton#pb_parameters {
    <property name="margin">
     <number>3</number>
    </property>
-   <item row="3" column="0">
-    <widget class="QPushButton" name="pb_up">
-     <property name="minimumSize">
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
+   <item row="5" column="2">
+    <widget class="QLabel" name="filter_out">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="maximumSize">
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Move filter up</string>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
      </property>
      <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../res/ic_resources.qrc">
-       <normaloff>:/icon/up</normaloff>:/icon/up</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>16</width>
-       <height>16</height>
-      </size>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
+      <string>BGR</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QPushButton" name="pb_down">
-     <property name="minimumSize">
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
+   <item row="5" column="1">
+    <widget class="QPushButton" name="pb_parameters">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>99</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
      <property name="maximumSize">
       <size>
-       <width>24</width>
-       <height>24</height>
+       <width>999999</width>
+       <height>20</height>
       </size>
      </property>
      <property name="toolTip">
-      <string>Move filter down</string>
+      <string>Show/Hide filter params</string>
      </property>
      <property name="text">
-      <string/>
+      <string notr="true"/>
      </property>
      <property name="icon">
       <iconset resource="../res/ic_resources.qrc">
-       <normaloff>:/icon/down</normaloff>:/icon/down</iconset>
+       <normaloff>:/icon/arrowdown</normaloff>:/icon/arrowdown</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>16</width>
-       <height>16</height>
+       <width>40</width>
+       <height>10</height>
       </size>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
      <property name="flat">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -183,71 +170,8 @@ QPushButton#pb_parameters {
      </property>
     </widget>
    </item>
-   <item row="0" column="0" colspan="4">
-    <widget class="QLabel" name="title">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="toolTip">
-      <string>Filter id and title</string>
-     </property>
-     <property name="text">
-      <string>Filter Title</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="4">
-    <widget class="QLabel" name="lbl_fid">
-     <property name="minimumSize">
-      <size>
-       <width>45</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>45</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="toolTip">
-      <string>Plugin ID</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="text">
-      <string>000</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="5">
-    <widget class="QPushButton" name="pb_remove">
+   <item row="4" column="0">
+    <widget class="QPushButton" name="pb_down">
      <property name="minimumSize">
       <size>
        <width>24</width>
@@ -261,14 +185,14 @@ QPushButton#pb_parameters {
       </size>
      </property>
      <property name="toolTip">
-      <string>Remove filter</string>
+      <string>Move filter down</string>
      </property>
      <property name="text">
       <string/>
      </property>
      <property name="icon">
       <iconset resource="../res/ic_resources.qrc">
-       <normaloff>:/icon/delete</normaloff>:/icon/delete</iconset>
+       <normaloff>:/icon/down</normaloff>:/icon/down</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -281,7 +205,61 @@ QPushButton#pb_parameters {
      </property>
     </widget>
    </item>
-   <item row="2" column="1" rowspan="3" colspan="5">
+   <item row="5" column="0">
+    <widget class="QLabel" name="filter_in">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>BGR</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QPushButton" name="pb_up">
+     <property name="minimumSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Move filter up</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/ic_resources.qrc">
+       <normaloff>:/icon/up</normaloff>:/icon/up</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" rowspan="3" colspan="3">
     <widget class="QFrame" name="frm_parameters_back">
      <property name="frameShape">
       <enum>QFrame::Panel</enum>
@@ -322,35 +300,101 @@ border: none;
      </layout>
     </widget>
    </item>
-   <item row="5" column="0" colspan="6">
-    <widget class="QPushButton" name="pb_parameters">
+   <item row="0" column="3">
+    <widget class="QPushButton" name="pb_remove">
+     <property name="minimumSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
-       <width>999999</width>
-       <height>20</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="toolTip">
-      <string>Show/Hide filter params</string>
+      <string>Remove filter</string>
      </property>
      <property name="text">
-      <string notr="true"/>
+      <string/>
      </property>
      <property name="icon">
       <iconset resource="../res/ic_resources.qrc">
-       <normaloff>:/icon/arrowdown</normaloff>:/icon/arrowdown</iconset>
+       <normaloff>:/icon/delete</normaloff>:/icon/delete</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>40</width>
-       <height>10</height>
+       <width>16</width>
+       <height>16</height>
       </size>
      </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
      <property name="flat">
-      <bool>true</bool>
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="lbl_fid">
+     <property name="minimumSize">
+      <size>
+       <width>45</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>45</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>Plugin ID</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <property name="text">
+      <string>000</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="title">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>Filter id and title</string>
+     </property>
+     <property name="text">
+      <string>Filter Title</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>

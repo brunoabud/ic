@@ -1,5 +1,7 @@
 import os
 import sys
+import logging
+log = logging.getLogger(__name__)
 
 from PyQt4.QtGui import QApplication, QFrame, QWidget, QSlider, QLabel
 from PyQt4.QtCore import pyqtSignal, pyqtSlot, Qt
@@ -12,7 +14,7 @@ from ic import engine
 
 
 class FilterUI(QFrame):
-    def __init__(self, fid, name, title, parent = None):
+    def __init__(self, fid, name, title, page_name, parent = None):
         super(FilterUI, self).__init__(parent)
         app = get_app()
         app.load_ui("", "ICFilterUI.ui", self)
@@ -21,6 +23,7 @@ class FilterUI(QFrame):
         self.lbl_fid.setNum(fid)
         self.title.setText(title)
         self.title.setToolTip(title)
+
         self.pb_up.setEnabled(False)
         self.pb_down.setEnabled(False)
         self.name = name
@@ -33,11 +36,20 @@ class FilterUI(QFrame):
         self.pb_remove.clicked.connect(self.pb_remove_clicked)
         self.pb_ignore.clicked.connect(self.pb_ignore_clicked)
 
+        self.page_name = page_name
+
+        page = engine.get_component("filter_rack").get_page(page_name)
+        filter_ = page.get_filter(fid)
+
+        self.filter_in.setText(filter_.in_color)
+        self.filter_out.setText(filter_.out_color)
+
+
     def update_buttons(self):
-        filter_rack = engine.get_component("filter_rack")
-        self.pb_up.setEnabled(not filter_rack.is_first(self.fid))
-        self.pb_down.setEnabled(not filter_rack.is_last(self.fid))
-        self.pb_ignore.setChecked(filter_rack.is_ignored(self.fid))
+        page = engine.get_component("filter_rack").get_page(self.page_name)
+        self.pb_up.setEnabled(not page.is_first(self.fid))
+        self.pb_down.setEnabled(not page.is_last(self.fid))
+        self.pb_ignore.setChecked(page.is_ignored(self.fid))
 
     def add_parameter(self, name, parameter_data, parameter_change):
         layout = self.frm_parameters.layout()
@@ -65,22 +77,18 @@ class FilterUI(QFrame):
         self.parameters[name] = qslider
 
     def populate_parameters(self):
-        app = get_app()
-        filter_rack = engine.get_component("filter_rack")
-
         plugin = engine.get_plugin(self.fid)
-
         for name in plugin.instance.parameters:
             self.add_parameter(name, plugin.instance.parameters[name], plugin.instance.parameter_change)
 
     def pb_up_clicked(self):
-        engine.get_component("filter_rack").up(self.fid)
+        engine.get_component("filter_rack").get_page(self.page_name).up(self.fid)
 
     def pb_down_clicked(self):
-        engine.get_component("filter_rack").down(self.fid)
+        engine.get_component("filter_rack").get_page(self.page_name).down(self.fid)
 
     def pb_remove_clicked(self):
-        engine.get_component("filter_rack").remove(self.fid)
+        engine.get_component("filter_rack").get_page(self.page_name).remove(self.fid)
         engine.unload_plugin(self.fid)
     def pb_ignore_clicked(self, checked):
-        engine.get_component("filter_rack").ignore(self.fid, checked)
+        engine.get_component("filter_rack").get_page(self.page_name).ignore(self.fid, checked)

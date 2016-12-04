@@ -18,7 +18,8 @@ class ICBlurFilter(object):
             return None
 
     def apply_filter(self, frame):
-        return cv2.blur(frame, (self.kernel_size,)*2)
+        frame.data = cv2.blur(frame.data, (self.kernel_size,)*2)
+        return frame
 
     def release(self):
         pass

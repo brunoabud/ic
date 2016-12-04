@@ -1,6 +1,9 @@
 import logging
 log = logging.getLogger(__name__)
 import types
+from xml.dom import Node, minidom
+import os
+import sys
 
 from gui.application import get_app, Application
 from gui.gui_interface import GUI_Interface
@@ -56,6 +59,7 @@ class VideoSource(object):
         self._plugin_instance = None
 
         self.mid = get_app().register_message_listener(self)
+        self.color_space = None
 
     #The method that should be called by the Video Input Plugin to make a Video
     #Source avaible to the application. The Video Input Plugin will have access
@@ -85,7 +89,13 @@ class VideoSource(object):
     # - Creating the bridge methods
     # - Starting the state handling for the video input plugin
     #When the Plugin is unloaded, the method `close_bridge` should be called
-    def init_bridge(self, plugin_instance):
+    def init_bridge(self, plugin):
+        plugin_instance = plugin.instance
+        # Extract the Input plugin OUT color space
+        doc = minidom.parse(os.path.join(plugin.root_path, "info.xml"))
+        color_space = doc.getElementsByTagName("out")[0].getAttribute("colorspace")
+        self.color_space = color_space
+
         #Generate the bridge methods
         for m in self._bridge_methods:
             #Check if the plugin instance has the method
@@ -117,12 +127,13 @@ class VideoSource(object):
             if hasattr(self, m):
                 delattr(self, m)
 
-        #Reset the states
+        # Reset the states
         self._source_open = False
-        #Tell the plugin to close the video source
+        # Tell the plugin to close the video source
         self._plugin_instance.close_source()
         self._plugin_instance = None
 
+        self.color_space = None
     def receive_message(self, mtype, mdata, sender):
         pass
 
@@ -136,5 +147,6 @@ class VideoSource(object):
             "fps": self._plugin_instance.get_fps(),
             "pos": self._plugin_instance.tell(),
             "length": self._plugin_instance.get_length(),
-            "size": self._plugin_instance.get_size()
+            "size": self._plugin_instance.get_size(),
+            "color_space": self.color_space
         }

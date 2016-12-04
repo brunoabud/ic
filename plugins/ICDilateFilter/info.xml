@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Filter>
+    <Title>Dilate Filter</Title>
+    <Author>Imagem Cinemática</Author>
+    <Description>Applies OpenCV `dilate` filter.</Description>
+    <Version>1.0.0</Version>
+    <in colorspace="GRAY" />
+    <out colorspace="GRAY" />
+</Filter>

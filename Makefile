@@ -52,7 +52,7 @@ QM_FILES := $(patsubst %,$(OUTPUT_QM_DIR)/%.qm,$(LOCALE_LIST))
 UI_FILES := $(call rwildcard,plugins,*.ui) $(call rwildcard,resources/ui,*.ui)
 
 #Create a list with all the .ui files that will be outputed by the pyuic4
-COMPILED_UI_FILES := $(patsubst $(UI_DIR)/%.ui,tmp/%.py,$(UI_FILES))
+COMPILED_UI_FILES := $(patsubst %.ui,tmp/%.py,$(UI_FILES))
 
 # Fid all py files inside the given directories (gui, util, plugins)
 PY_FILES := $(call rwildcard,gui,*.py) $(call rwildcard,util,*.py)\
@@ -108,13 +108,18 @@ $(OUTPUT_QM_DIR)/%.qm: $(OUTPUT_TS_DIR)/%.ts
 uic : $(COMPILED_UI_FILES)
 #Compile the ui files using the pyuic4 and output to the tmp dir
 #These files are useful for extracting the retranslateUi function
-tmp/%.py : $(UI_DIR)/%.ui
-	@mkdir -p tmp
-	pyuic4 $< -o $@
+
+
+tmp/%.py :
+	@printf "Generating %s...\n" $@
+	@mkdir -p $(dir $@)
+	@pyuic4 $(patsubst tmp/%.py,%.ui,$@) -x -o $@
+	
+#pyuic4 $< -o $@
 
 
 
 
 #TS FILES WILL NOT BE REMOVED SINCE IT CAN LEAD TO WORK LOSS
 clean:
-	@rm -f $(COMPILED_RES_FILES) $(QM_FILES) tmp/* project.pro
+	@rm -rf $(COMPILED_RES_FILES) $(QM_FILES) tmp/* project.pro

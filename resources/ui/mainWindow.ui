@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>875</width>
-    <height>582</height>
+    <width>741</width>
+    <height>499</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -111,10 +111,10 @@
              <x>0</x>
              <y>0</y>
              <width>222</width>
-             <height>474</height>
+             <height>391</height>
             </rect>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
+           <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
             <property name="spacing">
              <number>2</number>
             </property>
@@ -124,7 +124,71 @@
             <property name="margin">
              <number>3</number>
             </property>
-            <item alignment="Qt::AlignHCenter">
+            <item>
+             <widget class="QFrame" name="frame">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_2">
+               <item row="2" column="0">
+                <widget class="QLabel" name="lbl_page_in">
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="toolTip">
+                  <string>Input ColorSpace</string>
+                 </property>
+                 <property name="text">
+                  <string>BGR</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLabel" name="lbl_page_out">
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="toolTip">
+                  <string>Output ColorSpace</string>
+                 </property>
+                 <property name="text">
+                  <string>BGR</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>Filter Page</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="cb_filter_group"/>
+               </item>
+               <item row="1" column="0" colspan="2">
+                <widget class="Line" name="line">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="pb_add_filter">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -346,7 +410,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>875</width>
+     <width>741</width>
      <height>19</height>
     </rect>
    </property>
@@ -368,7 +432,7 @@
       <string>Preview source</string>
      </property>
      <addaction name="actn_raw"/>
-     <addaction name="actn_post_filter"/>
+     <addaction name="actn_filter_page"/>
      <addaction name="actn_post_analysis"/>
     </widget>
     <addaction name="menu_preview_source"/>
@@ -625,6 +689,14 @@
    </property>
    <property name="locale_str" stdset="0">
     <string notr="true">pt_BR</string>
+   </property>
+  </action>
+  <action name="actn_filter_page">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Filter Page</string>
    </property>
   </action>
  </widget>

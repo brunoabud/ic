@@ -38,7 +38,7 @@ def load_component(name, cls, *args, **kwargs):
         instance = cls(*args, **kwargs)
         engine.components[name] = instance
     except:
-        log.error("Could not load component '{}'".format(cls))
+        log.error("Could not load component '{}'".format(cls), exc_info=True)
 
 def init_input_plugin(pid):
     """Sets the current Video Input Plugin.
@@ -207,51 +207,51 @@ class Engine(object):
         isfile = os.path.isfile
         app = get_app()
 
-        #A plugin folder should contain the following structure
+        # A plugin folder should contain the following structure
         #
-        #Plugin_Folder -> info.xml
-        #              -> main.py
-        #              -> ui      -> [.ui files only]
+        # Plugin_Folder -> info.xml
+        #               -> main.py
+        #               -> ui      -> [.ui files only]
 
-        #Get the path to the directory that will contain the plugin folders
+        # Get the path to the directory that will contain the plugin folders
         plugins_path = app.settings["plugins_dir"]
 
-        #List all the folders inside the directory
+        # List all the folders inside the directory
         folders = listdir(plugins_path)
 
-        #The list of plugin loadeds
+        # The list of plugin loadeds
         plugin_list = []
 
-        #Iterate over the folders and extract the plugin info
+        # Iterate over the folders and extract the plugin info
         for folder in folders:
             full_path = join(plugins_path, folder)
 
             try:
-                #Open the xml file to extract its info
+                # Open the xml file to extract its info
                 doc = minidom.parse(join(full_path, "info.xml"))
 
-                #The correspondent plugin_type value for each node Name
+                # The correspondent plugin_type value for each node Name
                 type_list = {
                     "VideoInput" : PLUGIN_TYPE_VIDEO_INPUT,
                     "VideoAnalysis" : PLUGIN_TYPE_ANALYSIS,
                     "Filter": PLUGIN_TYPE_FILTER
                     }
 
-                #Get the tag name of the root element
+                # Get the tag name of the root element
                 type_tag = doc.documentElement.localName
-                #Go to the next folder if the type is not the specified
+                # Go to the next folder if the type is not the specified
                 if (plugin_type != PLUGIN_TYPE_ANY and
                 type_list[type_tag] != plugin_type):
                     continue
 
-                #List of tags to be extracted
+                # List of tags to be extracted
                 tags = ["Title", "Description", "Author", "Version"]
-                #List of text nodes extracted from the xml file
+                # List of text nodes extracted from the xml file
                 infos = {t:
                 [i.nodeValue for i in doc.getElementsByTagName(t)[0].childNodes if
                 i.nodeType == Node.TEXT_NODE][0] for t in tags}
 
-                #(type: int, name: str, path: str, info: dict)
+                # (type: int, name: str, path: str, info: dict)
                 plugin_list.append( (type_list[type_tag], folder, full_path, infos) )
             except:
                 log.error("Plugin {} raised exception, ignoring it.".format(folder), exc_info=True)
@@ -271,6 +271,7 @@ class Engine(object):
                 slf.instance          = instance
                 slf.loaded_ui_objects = {}
                 slf.gui_interface     = None
+                slf.info              = None
 
         join = os.path.join
         listdir = os.listdir
@@ -278,29 +279,29 @@ class Engine(object):
         isfile = os.path.isfile
         app = get_app()
 
-        #A plugin folder should contain the following structure
+        # A plugin folder should contain the following structure
         #
-        #Plugin_Folder -> info.xml
-        #              -> main.py
-        #              -> ui      -> [.ui files only]
+        # Plugin_Folder -> info.xml
+        #               -> main.py
+        #               -> ui      -> [.ui files only]
 
-        #Get a list to the installed plugins
+        # Get a list to the installed plugins
         plist = self._list_plugins()
-        #Check if the plugin is in the list and get it
+        # Check if the plugin is in the list and get it
         p = [p_data for p_data in plist if p_data[1] == plugin_name]
         if not p:
             raise ValueError("There is no plugin '{}' installed".format(plugin_name))
 
-        #Unpack the data
+        # Unpack the data
         ptype, pname, ppath, pinfo = p[0]
 
-        #Check if there is a main.py file in the root folder
+        # Check if there is a main.py file in the root folder
         main_path = join(ppath, "main.py")
         if not isfile(main_path):
             raise IOError("The plugin '{}' doesn't have a main module".format(plugin_name))
 
-        #Load the module containing the main() function and call it to create
-        #the plugin instance
+        # Load the module containing the main() function and call it to create
+        # the plugin instance
         instance = None
         try:
             with open(main_path, "r") as f:
@@ -311,11 +312,11 @@ class Engine(object):
         except:
             raise
 
-        #Create the plugin object that will be hold in the dictionary
+        # Create the plugin object that will be hold in the dictionary
         plugin = Plugin(ptype, pname, ppath, instance)
-        #Find a free id
+        # Find a free id
         id_ = find_free_key(self._loaded_plugins)
-        #Save it to the dictionary and return the plugin object
+        # Save it to the dictionary and return the plugin object
         self._loaded_plugins[id_] = plugin
 
         app.post_message("plugin_loaded",
@@ -371,7 +372,7 @@ class Engine(object):
                 ret = new_plugin.instance.init_plugin(gui_interface=interface, video_source_bridge=video_source_bridge)
                 if ret:
                     #Init the VideoSource bridge
-                    video_source.init_bridge(new_plugin.instance)
+                    video_source.init_bridge(new_plugin)
                     new_plugin.gui_interface = interface
                     self.input_plugin=  {"plugin_id": plugin_id}
                     app.post_message("video_input_changed", {"plugin_id": plugin_id}, -1)
@@ -413,10 +414,49 @@ class Engine(object):
 
             # Create a GUI interface and initialize the plugin
             gui_interface = GUI_Interface(plugin_id)
+            # Parse de info XML to look for Filter Pages
+            info_path = os.path.join(plugin.root_path, "info.xml")
+            doc = minidom.parse(info_path)
+            # Retrieve all FilterPage Elements
+            pages = {}
+            for element in doc.getElementsByTagName("FilterPage"):
+                in_, out, name = [element.getAttribute(n) for n in ["in", "out", "name"]]
+                pages[name] = {
+                    "in"     : in_,
+                    "out"    : out,
+                    "filters": [] ,
+                    "name"   : name
+                    }
 
+                for f in [n for n in element.childNodes if
+                n.nodeType == Node.ELEMENT_NODE and n.localName == "Filter"]:
+                    pages[name]["filters"].append(f.getAttribute("name"))
+
+            # Create a Filter Page for each page, and try to load the default
+            # filter plugins that each page requires.
+            rack_interface = {}
+
+            for page in pages.values():
+                rack = get_component("filter_rack")
+                p = rack.add_page(page["name"], page["in"], page["out"])
+                rack_interface[page["name"]] = p
+
+                # Try to load each filter plugin and add it to the rack
+                for f in page["filters"]:
+                    try:
+                        log.debug("Loading filter {} for page {}".format(
+                        f, page["name"]))
+                        pid, filter_plugin = load_plugin(f)
+                        log.debug("Loaded pid {}".format(pid))
+                        p.add(pid)
+                        
+                    except:
+                        log.error("Filter '{}' required by Plugin could not be loaded".format(f),
+                        exc_info=True)
             try:
-                if plugin.instance.init_plugin(gui_interface=gui_interface):
+                if plugin.instance.init_plugin(gui_interface=gui_interface, rack_interface=rack_interface):
                     plugin.gui_interface = gui_interface
+                    plugin.rack_interface = rack_interface
                     self.analysis_plugin = {"plugin_id": plugin_id}
                     # Check if there is a media opened to inform the analysis plugin
                     video_source = get_component("video_source")

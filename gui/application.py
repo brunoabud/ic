@@ -52,13 +52,10 @@ class Application(object):
 
     # This option tells the application to pump raw frames to the preview queue
     OPT_PREVIEW_RAW            = 0x1
-    # This option tells the application to pump frames right after they passed
-    # through the filters in the filter rack
-    OPT_PREVIEW_POST_FILTER    = 0x2
     # This options tells the application to pump frames right after they got
     # processed by the analysis plugin
-    OPT_PREVIEW_POST_ANALYSIS = 0x3
-
+    OPT_PREVIEW_POST_ANALYSIS  = 0x2
+    OPT_PREVIEW_FILTER_PAGE    = 0x3
     def __init__(self, argv):
         # Assert that there is no previous created instance
         assert Application._INSTANCE is None
@@ -113,7 +110,8 @@ class Application(object):
         # A dictionary containing options the user can change by interacting with
         # the GUI
         self.user_options = {
-            "preview_source": Application.OPT_PREVIEW_POST_ANALYSIS
+            "preview_source": Application.OPT_PREVIEW_POST_ANALYSIS,
+            "filter_group"  : "Raw"
             }
 
         #Current installed translator

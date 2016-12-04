@@ -4,4 +4,6 @@
     <Author>Imagem Cinemática</Author>
     <Description>Applies OpenCV `blur` filter.</Description>
     <Version>1.0.0</Version>
+    <in colorspace="GRAY" />
+    <out colorspace="GRAY" />
 </Filter>

@@ -3,6 +3,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from PyQt4.QtCore import QThread, pyqtSlot, pyqtSignal, QMutex, QWaitCondition
+import numpy as np
 
 from ic.queue import Queue
 from gui.application import get_app, Application
@@ -10,6 +11,35 @@ from ic.filter_rack import FilterRack
 from ic.queue import Empty, Full
 from ic import engine
 from ic.video_source import SourceClosedError
+
+
+class ICFrame(object):
+    """Class that represents a frame.
+
+    An IC Frame contains members like:
+        -pos         (Frame position)
+        -fps         (FPS at the moment that the frame was read)
+        -size        (The dimensions of the frame)
+        -data        (A numpy ndarray containing the frame data)
+        -color_space (A string represeting the color space of the frame)
+        -length      (The length of the media that contains the frame)
+    """
+    def __init__(self, pos, fps, size, color_space, length, data):
+        self.pos         = pos
+        self.fps         = fps
+        self.size        = size
+        self.color_space = color_space
+        self.length      = length
+        self.data        = data
+
+    def copy(self):
+        f = ICFrame(self.pos,
+            self.fps, self.size,
+            self.color_space,
+            self.length, None
+            )
+        f.data = np.copy(self.data)
+        return f
 
 class FSWorkerThread(QThread):
     """Base class for FrameStream worker threads.
@@ -118,10 +148,25 @@ class VideoInputThread(FSWorkerThread):
                 app = get_app()
                 vs  = engine.get_component("video_source")
 
-                self.frame_state = vs.source_state()
+                self.source_state = vs.source_state()
                 self.raw_frame = vs.next()
 
                 if self.raw_frame is not None:
+                    self.frame = ICFrame(
+                        self.source_state["pos"],
+                        self.source_state["fps"],
+                        self.source_state["size"],
+                        self.source_state["color_space"],
+                        self.source_state["length"],
+                        self.raw_frame
+                        )
+                    try:
+                        fr         = engine.get_component("filter_rack")
+                        raw_page   = fr.get_page("Raw")
+                        self.frame = raw_page.apply_filters(self.frame)
+                    except:
+                        log.error("Error when trying to apply raw filters", exc_info=True)
+
                     self.state = VideoInputThread.VI_PUTTING_FRAME
             except EOFError:
                 if self.fs.loop:
@@ -135,19 +180,21 @@ class VideoInputThread(FSWorkerThread):
 
         if self.state == VideoInputThread.VI_PUTTING_FRAME:
             try:
-                self.fs.raw_queue.put((self.frame_state, self.raw_frame), False)
-                self.raw_frame = None
-                self.frame_state = None
-                self.state = VideoInputThread.VI_GETTING_RAW_FRAME
+                self.fs.raw_queue.put(self.frame, False)
+                self.raw_frame    = None
+                self.source_state = None
+                self.frame        = None
+                self.state        = VideoInputThread.VI_GETTING_RAW_FRAME
                 # Signal end of the work
                 return True
             except:
                 pass
 
     def work_started(self):
-        self.state = VideoInputThread.VI_GETTING_RAW_FRAME
-        self.raw_frame = None
+        self.state       = VideoInputThread.VI_GETTING_RAW_FRAME
+        self.raw_frame   = None
         self.frame_state = None
+        self.frame       = None
 
 class VideoProcessingThread(FSWorkerThread):
     """Thread responsible for filtering and sending frames to the analysis plugin.
@@ -159,10 +206,8 @@ class VideoProcessingThread(FSWorkerThread):
 
     VP_GETTING_RAW_FRAME         = 0x01
     VP_PUTTING_RAW_PREVIEW       = 0x02
-    VP_FILTERING                 = 0x03
-    VP_PUTTING_FILTERED_PREVIEW  = 0x04
-    VP_PROCESSING                = 0x05
-    VP_PUTTING_PROCESSED_PREVIEW = 0x06
+    VP_PROCESSING                = 0x03
+    VP_PUTTING_PROCESSED_PREVIEW = 0x04
 
     def __init__(self, fs):
         super(VideoProcessingThread, self).__init__(fs)
@@ -176,8 +221,8 @@ class VideoProcessingThread(FSWorkerThread):
         # the state to VP_PUTTIN_RAW_PREVIEW
         if self.state == VideoProcessingThread.VP_GETTING_RAW_FRAME:
             try:
-                self.frame_state, self.raw_frame = self.fs.raw_queue.get(False)
-                if self.raw_frame is not None:
+                self.raw_frame = self.fs.raw_queue.get(False)
+                if self.raw_frame.data is not None:
                     self.state = VideoProcessingThread.VP_PUTTING_RAW_PREVIEW
             except Empty:
                 pass
@@ -185,37 +230,12 @@ class VideoProcessingThread(FSWorkerThread):
         if self.state == VideoProcessingThread.VP_PUTTING_RAW_PREVIEW:
             try:
                 if get_app().user_options["preview_source"] == Application.OPT_PREVIEW_RAW:
-                    self.fs.preview_queue.put((self.frame_state, self.raw_frame), False)
-                    self.state = VideoProcessingThread.VP_FILTERING
+                    self.fs.preview_queue.put(self.raw_frame, False)
+                    self.state = VideoProcessingThread.VP_PROCESSING
                 else:
-                    self.state = VideoProcessingThread.VP_FILTERING
+                    self.state = VideoProcessingThread.VP_PROCESSING
             except:
                 pass
-
-        if self.state == VideoProcessingThread.VP_FILTERING:
-            self.filtered_frame = self.raw_frame
-            for filter_element in engine.get_component("filter_rack"):
-                if filter_element.ignore:
-                    continue
-                try:
-                    app = get_app()
-                    plugin = engine.get_plugin(filter_element.fid)
-                    self.filtered_frame = plugin.instance.apply_filter(self.filtered_frame)
-                except:
-                    engine.get_component("filter_rack").ignore(filter_element.fid, True)
-            self.state = VideoProcessingThread.VP_PUTTING_FILTERED_PREVIEW
-
-        if self.state == VideoProcessingThread.VP_PUTTING_FILTERED_PREVIEW:
-            if get_app().user_options["preview_source"] == Application.OPT_PREVIEW_POST_FILTER or\
-            (get_app().user_options["preview_source"] == Application.OPT_PREVIEW_POST_ANALYSIS and
-            engine.get_analysis_plugin() is None):
-                try:
-                    self.fs.preview_queue.put((self.frame_state, self.filtered_frame), False)
-                    self.state = VideoProcessingThread.VP_PROCESSING
-                except:
-                    pass
-            else:
-                self.state = VideoProcessingThread.VP_PROCESSING
 
         if self.state == VideoProcessingThread.VP_PROCESSING:
             try:
@@ -225,7 +245,7 @@ class VideoProcessingThread(FSWorkerThread):
                 self.state = VideoProcessingThread.VP_GETTING_RAW_FRAME
                 return True
 
-            self.processed_state, self.processed_frame = plugin.process_frame(self.filtered_frame, self.frame_state)
+            self.processed_frame = plugin.process_frame(self.raw_frame)
             if get_app().user_options["preview_source"] == Application.OPT_PREVIEW_POST_ANALYSIS:
                 self.state = VideoProcessingThread.VP_PUTTING_PROCESSED_PREVIEW
             else:
@@ -234,7 +254,7 @@ class VideoProcessingThread(FSWorkerThread):
 
         if self.state == VideoProcessingThread.VP_PUTTING_PROCESSED_PREVIEW:
             try:
-                self.fs.preview_queue.put((self.processed_state, self.processed_frame), False)
+                self.fs.preview_queue.put(self.processed_frame, False)
                 self.state = VideoProcessingThread.VP_GETTING_RAW_FRAME
                 return True
             except:

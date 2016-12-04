@@ -17,7 +17,7 @@ project.pro
 tmp/
 
 # Tool used to locate code tags
-find_tags.sh
+tag_finder
 
 # Annotations and etc
 notes/
