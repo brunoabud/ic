@@ -1,85 +1,93 @@
+#!/usr/bin/env python
+# coding: latin-1
+# Imagem Cinemática is a free software intended to be used as a tool for teachers
+# and students. It utilizes Computer Vision techniques to extract the trajectory
+# of moving objects from video data.
+#
+# The code contained in this project follows the Google Python Style Guide
+# Revision 2.59.
+# The specifics can be found at http://google.github.io/styleguide/pyguide.html
+#
+#
+# Copyright (C) 2016  Bruno Abude Cardoso
+#
+# Imagem Cinemática is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Imagem Cinemática is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""Module responsible for loading the main components of the application.
+
+"""
 import sys
 import logging
 
-from PyQt4.QtGui import QApplication
-from PyQt4.QtCore import QTimer, QCoreApplication
-import colorama
+from ic import log as ic_log
 
-import ic.log
-from ic import engine
+ERROR_ENGINE_INITIALIZATION = ("Error when initializing the engine module.")
+ERROR_MAIN_MODULE_IMPORT = ("Error when importing a main module.")
+ERROR_APPLICATION_INIT = ("Error when creating the application object.")
+ERROR_MAIN_WINDOW_LOAD = ("Error when loading the main window.")
 
-# Error Codes
-ERROR_ENGINE_INITIALIZATION = 0x001
-ERROR_MAIN_MODULE_IMPORT    = 0x002
-ERROR_APPLICATION_INIT      = 0x003
-ERROR_MAIN_WINDOW_LOAD      = 0x004
+LOG = None
 
-def load_logger():
-    # Identify the operational system
-    # Init the logging utilities
-    handler     = logging.StreamHandler()
+def create_logger():
+    """Set up the logging utility, using the formatter that best matches the OS.
+
+    """
+    global LOG
+    handler = logging.StreamHandler()
     root_logger = logging.getLogger()
-    # Setup the handler formater and level
     if sys.platform == "linux2":
-        handler.setFormatter(ic.log.ANSIFormatter())
+        handler.setFormatter(ic_log.ANSIFormatter())
     else:
-        handler.setFormatter(ic.log.ColorlessFormatter())
+        handler.setFormatter(ic_log.ColorlessFormatter())
     root_logger.addHandler(handler)
     handler.setLevel(logging.DEBUG)
     root_logger.setLevel(logging.NOTSET)
-    # Filter out the PyQt4 logging messages
-    handler.addFilter(ic.log.NameFilter("PyQt4"))
+    # Filter out the annoying PyQt4 logging messages
+    handler.addFilter(ic_log.NameFilter("PyQt4"))
+    LOG = logging.getLogger(__name__)
 
-if __name__ == "__main__":
-    load_logger()
-
-
-
-    log = logging.getLogger(__name__)
-
-    # Import all main modules
+def main():
     try:
-        from gui             import application
-        from ic.video_source import VideoSource
-        from ic.frame_stream import FrameStream
-        from ic.filter_rack  import FilterRack
+        from gui import application
         from gui.main_window import MainWindow
+        from ic import engine
+        from ic.filter_rack import FilterRack
+        from ic.frame_stream import FrameStream
+        from ic.video_source import VideoSource
     except:
-        log.critical("Error when importing a main module", exc_info=True)
+        LOG.critical(ERROR_MAIN_MODULE_IMPORT, exc_info=True)
         sys.exit(ERROR_MAIN_MODULE_IMPORT)
-
-    # Create the application object
     try:
         app = application.Application(sys.argv)
     except:
-        log.critical("Error when creating the Application object", exc_info=True)
+        LOG.critical(ERROR_APPLICATION_INIT, exc_info=True)
         sys.exit(ERROR_APPLICATION_INIT)
-
-    # Initialize the engine and load main components
     try:
-        log.debug("Initialiazing Engine...")
-        engine.init()
-        engine.load_component("filter_rack", FilterRack)
-        engine.load_component("video_source", VideoSource)
-        engine.load_component("frame_stream", FrameStream, 1, 1)
-        log.debug("Engine initialized")
+        engine.get_engine().load_component("filter_rack", FilterRack)
+        engine.get_engine().load_component("frame_stream", FrameStream)
+        engine.get_engine().load_component("video_source", VideoSource)
     except:
-        log.critical("A engine main component could not be initialized.", exc_info=True)
-        app.exit(ERROR_ENGINE_INITIALIZATION)
-
-    # Import all the resource modules inside the gui package
+        LOG.critical(ERROR_ENGINE_INITIALIZATION, exc_info=True)
+        sys.exit(ERROR_ENGINE_INITIALIZATION)
     try:
         app.import_resources()
+        main_window = app.load_ui("main_window", "main_window.ui", MainWindow())
+        main_window.show()
     except:
-        log.error("Error when importing resources, some things may not be properly shown")
-
-
-    # Load the Main Window
-    try:
-        mainWindow = app.load_ui("main_window", "mainWindow.ui", MainWindow())
-        mainWindow.show()
-    except:
-        log.critical("Error when loading the main window", exc_info=True)
-        sys.exit(ERROR_MAIN_WINDOW_LOAD)
-
+        LOG.error("Error when importing resources, some things may not be properly shown.")
     sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    create_logger()
+    main()
