@@ -1,6 +1,19 @@
-import traceback as tb
+# coding: latin-1
+# Copyright (C) 2016 Bruno Abude Cardoso
+#
+# Imagem Cinemática is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Imagem Cinemática is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import logging
-log = logging.getLogger(__name__)
 
 from PyQt4.QtCore import QThread, pyqtSlot, pyqtSignal, QMutex, QWaitCondition
 import numpy as np
@@ -9,31 +22,36 @@ from ic.queue import Queue
 from gui.application import get_app, Application
 from ic.filter_rack import FilterRack
 from ic.queue import Empty, Full
-from ic import engine
+from ic import get_engine
 from ic.video_source import SourceClosedError
+from filter_rack import FilterPageFlowError
 
 
-class ICFrame(object):
+LOG = logging.getLogger(__name__)
+
+
+class Frame(object):
     """Class that represents a frame.
 
-    An IC Frame contains members like:
-        -pos         (Frame position)
-        -fps         (FPS at the moment that the frame was read)
-        -size        (The dimensions of the frame)
-        -data        (A numpy ndarray containing the frame data)
-        -color_space (A string represeting the color space of the frame)
-        -length      (The length of the media that contains the frame)
+    Members:
+      pos: Frame position.
+      fps: FPS at the moment that the frame was read.
+      size: The dimensions of the frame.
+      data: A numpy ndarray containing the frame data.
+      color_space: A string represeting the color space of the frame.
+      length: The length of the media that contains the frame.
     """
     def __init__(self, pos, fps, size, color_space, length, data):
-        self.pos         = pos
-        self.fps         = fps
-        self.size        = size
+        self.pos = pos
+        self.fps = fps
+        self.size = size
         self.color_space = color_space
-        self.length      = length
-        self.data        = data
+        self.length = length
+        self.data = data
 
     def copy(self):
-        f = ICFrame(self.pos,
+        """Returns a new Frame object containing the same data."""
+        f = Frame(self.pos,
             self.fps, self.size,
             self.color_space,
             self.length, None
@@ -45,37 +63,30 @@ class FSWorkerThread(QThread):
     """Base class for FrameStream worker threads.
 
     """
-    #The worker threads are modeled as Finite State Machines.
-    #At each iteration of the main loop, it will try to process a state and the
-    #next one, until it fails or reachs the last state. So, instead of doing
-    #long and locking operations, it splits it in smaller non-locking operations.
-    #If a state fails, the next iteration will try to process that state again.
-    #The thread can also be aborted on intermediary states, not only on the last
-    #one.
-
-    # Doing nothing
+    # The worker threads are modeled as Finite State Machines.
+    # At each iteration of the main loop, it will try to process a state and the
+    # next one, until it fails or reachs the last state. So, instead of doing
+    # long and locking operations, its splitted into smaller non-locking operations.
+    # If a state fails, the next iteration will try to process that state again.
+    # The thread can also be aborted on intermediary states, not only on the last
+    # one.
     STATE_IDLE              = 0x00
-
     _SLEEP_TIME = 20
 
     def __init__(self, fs):
-        super(QThread, self).__init__()
-        # The frame stream instance
+        super(FSWorkerThread, self).__init__()
         self.fs = fs
         # The flag used to tell the main loop to exit as soon as possible, lea-
         # ding to the end of the thread
         self.abort_flag = False
-
         self.state = FSWorkerThread.STATE_IDLE
         self.error_flag = False
         self.work_done = False
-
         self.old_state = self.state
 
     def run(self):
         # Tell the FS that the thread is becoming active
         self.fs._worker_activated()
-
         while not self.abort_flag:
             # Lock the mutex
             self.fs.mutex.lock()
@@ -112,12 +123,10 @@ class FSWorkerThread(QThread):
                 # Do the damn work
                 self.work_done = self.do_work()
             except:
-                log.error("Error when doing work", exc_info=True)
+                LOG.error("Error when doing work", exc_info=True)
                 self.error_flag = True
-
-            # Give her a break, poor girl
+            # Give it a break
             self.msleep(FSWorkerThread._SLEEP_TIME)
-
 
     # This should be overrided by the subclasses
     def do_work(self):
@@ -135,7 +144,7 @@ class VideoInputThread(FSWorkerThread):
     # The states of this worker. Each state is considered a step of the work.
     # Trying to get the frame from the plugin
     VI_GETTING_RAW_FRAME = 0x01
-    # Trying to put the frame in the raw queue
+    # Trying to put the frame into the raw queue
     VI_PUTTING_FRAME     = 0x02
 
     def __init__(self, fs):
@@ -146,27 +155,29 @@ class VideoInputThread(FSWorkerThread):
         if self.state == VideoInputThread.VI_GETTING_RAW_FRAME:
             try:
                 app = get_app()
-                vs  = engine.get_component("video_source")
+                vs  = get_engine().get_component("video_source")
 
                 self.source_state = vs.source_state()
                 self.raw_frame = vs.next()
 
                 if self.raw_frame is not None:
-                    self.frame = ICFrame(
-                        self.source_state["pos"],
-                        self.source_state["fps"],
-                        self.source_state["size"],
-                        self.source_state["color_space"],
-                        self.source_state["length"],
-                        self.raw_frame
+                    self.frame = Frame(self.source_state["pos"],
+                                       self.source_state["fps"],
+                                       self.source_state["size"],
+                                       self.source_state["color_space"],
+                                       self.source_state["length"],
+                                       self.raw_frame
                         )
                     try:
-                        fr         = engine.get_component("filter_rack")
-                        raw_page   = fr.get_page("Raw")
+                        fr = get_engine().get_component("filter_rack")
+                        raw_page = fr.get_page("Raw")
                         self.frame = raw_page.apply_filters(self.frame)
                     except:
-                        log.error("Error when trying to apply raw filters", exc_info=True)
-
+                        self.fs.stop()
+                        get_app().post_message("error_frame_stream", {
+                                               "type": FilterPageFlowError,
+                                               "description": ""
+                                               }, self.fs.m_id)
                     self.state = VideoInputThread.VI_PUTTING_FRAME
             except EOFError:
                 if self.fs.loop:
@@ -181,20 +192,20 @@ class VideoInputThread(FSWorkerThread):
         if self.state == VideoInputThread.VI_PUTTING_FRAME:
             try:
                 self.fs.raw_queue.put(self.frame, False)
-                self.raw_frame    = None
+                self.raw_frame = None
                 self.source_state = None
-                self.frame        = None
-                self.state        = VideoInputThread.VI_GETTING_RAW_FRAME
+                self.frame = None
+                self.state = VideoInputThread.VI_GETTING_RAW_FRAME
                 # Signal end of the work
                 return True
             except:
                 pass
 
     def work_started(self):
-        self.state       = VideoInputThread.VI_GETTING_RAW_FRAME
-        self.raw_frame   = None
+        self.state = VideoInputThread.VI_GETTING_RAW_FRAME
+        self.raw_frame = None
         self.frame_state = None
-        self.frame       = None
+        self.frame = None
 
 class VideoProcessingThread(FSWorkerThread):
     """Thread responsible for filtering and sending frames to the analysis plugin.
@@ -204,9 +215,9 @@ class VideoProcessingThread(FSWorkerThread):
 
     """
 
-    VP_GETTING_RAW_FRAME         = 0x01
-    VP_PUTTING_RAW_PREVIEW       = 0x02
-    VP_PROCESSING                = 0x03
+    VP_GETTING_RAW_FRAME = 0x01
+    VP_PUTTING_RAW_PREVIEW = 0x02
+    VP_PROCESSING = 0x03
     VP_PUTTING_PROCESSED_PREVIEW = 0x04
 
     def __init__(self, fs):
@@ -239,18 +250,30 @@ class VideoProcessingThread(FSWorkerThread):
 
         if self.state == VideoProcessingThread.VP_PROCESSING:
             try:
-                plugin = engine.get_plugin(engine.get_analysis_plugin()["plugin_id"]).instance
+                plugin = get_engine().get_plugin(get_engine().get_analysis_plugin()["plugin_id"]).instance
             except:
                 # There is no analysis plugin loaded so ignore it
                 self.state = VideoProcessingThread.VP_GETTING_RAW_FRAME
                 return True
-
-            self.processed_frame = plugin.process_frame(self.raw_frame)
-            if get_app().user_options["preview_source"] == Application.OPT_PREVIEW_POST_ANALYSIS:
-                self.state = VideoProcessingThread.VP_PUTTING_PROCESSED_PREVIEW
-            else:
-                self.state = VideoProcessingThread.VP_GETTING_RAW_FRAME
-                return True
+            try:
+                self.processed_frame = plugin.process_frame(self.raw_frame)
+                if get_app().user_options["preview_source"] == Application.OPT_PREVIEW_POST_ANALYSIS:
+                    self.state = VideoProcessingThread.VP_PUTTING_PROCESSED_PREVIEW
+                else:
+                    self.state = VideoProcessingThread.VP_GETTING_RAW_FRAME
+                    return True
+            except FilterPageFlowError as e:
+                self.fs.stop()
+                get_app().post_message("error_frame_stream", {
+                                       "type": FilterPageFlowError,
+                                       "description": ""
+                                       }, self.fs.m_id)
+            except Exception as e:
+                self.fs.stop()
+                get_app().post_message("error_frame_stream", {
+                                       "type": type(e),
+                                       "description": e.message
+                                       }, self.fs.m_id)
 
         if self.state == VideoProcessingThread.VP_PUTTING_PROCESSED_PREVIEW:
             try:
@@ -275,14 +298,12 @@ class FrameStream(object):
     The reading is done in one thread and the processing in another, both sepa-
     rated from the main thread.
 
-    :singleton
     """
-
     # The current state of the FS can be described by these constants
-    STATE_IDLE                = 0x0
-    STATE_STARTED             = 0x2
-    STATE_WAITING_TO_STOP     = 0x3
-    STATE_WAITING_TO_START    = 0x4
+    STATE_IDLE = 0x0
+    STATE_STARTED = 0x2
+    STATE_WAITING_TO_STOP = 0x3
+    STATE_WAITING_TO_START = 0x4
 
     _INSTANCE = None
 
@@ -293,28 +314,21 @@ class FrameStream(object):
         # Create the Raw Frames Queue, where the frames got from the Video Source
         # will be put
         self.raw_queue     = Queue(raw_queue_len)
-
-        # Create the Preview Queue, where the frames ready to be viewed by the
+        # The Preview Queue, where the frames ready to be viewed by the
         # user will be put. These frames can come from many places, it will
         # depend on the value of app.user_option["preview_source"]
         self.preview_queue = Queue(preview_queue_len)
-
         # The thread responsible for reading the frames.
         self._input_thread = VideoInputThread(self)
-
         # The thread responsible for pumping the frame into the filter rack
         # and analysis plugin
         self._processor_thread = VideoProcessingThread(self)
-
         # The state of the frame stream
         self.state = FrameStream.STATE_IDLE
-
         # Is the FS active (reading and processing frames)?
         self.active = False
-
         # Mutex used to access the FrameStream states from the WorkerThreads
         self.mutex = QMutex()
-
         # This member will hold the number of workers that are active, or "not idle"
         # this is necessary because to stop or start the frame stream, both wor-
         # kers need to stop or start, but they do this in the different moments.
@@ -323,35 +337,26 @@ class FrameStream(object):
         self.active_workers = 0
         # Number of worker threads
         self.worker_count   = 2
-
         self.frozen_workers = 0
-
         # Wait condition used to wake the workers from an idle state
         self.startCondition = QWaitCondition()
-
         # Sometimes will be useful to stream only a single frame (i.e. when the
         # user changes the position of the video cursor and it needs to read a
         # frame to update the view). This member signals that the current work
         # is supposed to be done only one time
         self.single_shot = False
-
         self.state = FrameStream.STATE_WAITING_TO_STOP
-
         # If True, the frame stream will seek the video source to 0 when it
         # reaches the last frame
         self.loop = True
-
         # When the workers must be stopped to do just one operation, this flag
         # is set to true
         self.frozen = False
-
         # The condition to unfreeze the workers
         self.freeze_condition = QWaitCondition()
-
         # Start the worker threads so the run() method will be called
         self._input_thread.start()
         self._processor_thread.start()
-
         self.m_id = get_app().register_message_listener(self)
 
     def _worker_freezed(self):
@@ -395,14 +400,21 @@ class FrameStream(object):
         pass
 
     def freeze(self):
-        pass
+        raise NotImplementedError()
 
     def unfreeze(self):
-        pass
+        raise NotImplementedError()
 
     def start(self, single_shot = False):
-        self.single_shot = single_shot
+        """Start the frame stream.
 
+        This methods starts the Video Input and Video Processing Threads.
+
+        Args:
+          single_shot (bool): Default is False. If True, do only one complete
+            work step, resulting in only one frame being processed.
+        """
+        self.single_shot = single_shot
         # If IDLE just wake the threads and set active to true if it is not
         if self.state == FrameStream.STATE_IDLE:
             if self.single_shot:
@@ -427,6 +439,9 @@ class FrameStream(object):
             self.startCondition.wakeAll()
 
     def stop(self):
+        """Stop the frame stream.
+
+        """
         # If IDLE just ignore
         if self.state == FrameStream.STATE_IDLE or self.state == FrameStream.STATE_WAITING_TO_STOP:
             pass
@@ -446,7 +461,15 @@ class FrameStream(object):
             self.active = False
 
     def seek(self, pos):
-        vs = engine.get_component("video_source")
+        """Change the position of the current frame, if possible.
+
+        If the video source is seekable, this methods will seek to the given
+        position, signaling the application about it.
+
+        Args:
+          pos (int): The new position.
+        """
+        vs = get_engine().get_component("video_source")
         app = get_app()
 
         # If the thread is waiting to start, wait it to start or stop
@@ -472,7 +495,7 @@ class FrameStream(object):
             app.post_message("frame_stream_sought", {"pos": pos}, self.m_id)
 
         except Exception as e:
-            log.error("Seeking raised an error", exc_info=True)
+            LOG.error("Seeking raised an error", exc_info=True)
         finally:
             if self.frozen:
                 self.frozen = False
