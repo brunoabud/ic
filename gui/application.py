@@ -322,7 +322,7 @@ class Application(object):
                 except: #pylint: disable=bare-except
                     LOG.error("The listener with id %d raised an exception when"
                               " receiving a message and will be removed from"
-                              " the list.", recipient)
+                              " the list.", recipient, exc_info=True)
                     del self._message_listeners[recipient]
 
     def import_resources(self):
@@ -371,7 +371,7 @@ class Application(object):
           UILoadError: If the `uic` module raises an exception.
         """
         # Temporary solution for solving circular dependencies
-        engine = sys.modules["ic.engine"]
+        engine = sys.modules["ic.engine"].get_engine()
         plugin = engine.get_plugin(plugin_id)
 
         if name in plugin.loaded_ui_objects:
@@ -432,7 +432,7 @@ class Application(object):
 
         """
         # Temporary solution for solving circular dependencies errors
-        engine = sys.modules["ic.engine"]
+        engine = sys.modules["ic.engine"].get_engine()
         plugin = engine.get_plugin(plugin_id)
         if name not in plugin.loaded_ui_objects:
             raise KeyError("There is no ui object with given name")

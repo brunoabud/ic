@@ -73,8 +73,9 @@ def main():
         LOG.critical(ERROR_APPLICATION_INIT, exc_info=True)
         sys.exit(ERROR_APPLICATION_INIT)
     try:
+        engine.init()
         engine.get_engine().load_component("filter_rack", FilterRack)
-        engine.get_engine().load_component("frame_stream", FrameStream)
+        engine.get_engine().load_component("frame_stream", FrameStream, 1, 1)
         engine.get_engine().load_component("video_source", VideoSource)
     except:
         LOG.critical(ERROR_ENGINE_INITIALIZATION, exc_info=True)

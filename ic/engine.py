@@ -28,6 +28,7 @@ from gui.gui_interface import GUI_Interface
 from util import find_free_key
 from gui.application import get_app
 
+
 LOG = logging.getLogger(__name__)
 
 class PluginInitError(Exception):

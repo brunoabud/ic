@@ -22,7 +22,7 @@ from ic.queue import Queue
 from gui.application import get_app, Application
 from ic.filter_rack import FilterRack
 from ic.queue import Empty, Full
-from ic import get_engine
+from ic.engine import get_engine
 from ic.video_source import SourceClosedError
 from filter_rack import FilterPageFlowError
 
@@ -355,9 +355,9 @@ class FrameStream(object):
         # The condition to unfreeze the workers
         self.freeze_condition = QWaitCondition()
         # Start the worker threads so the run() method will be called
-        self._input_thread.start()
-        self._processor_thread.start()
         self.m_id = get_app().register_message_listener(self)
+        self._processor_thread.start()
+        self._input_thread.start()
 
     def _worker_freezed(self):
         self.frozen_workers += 1

@@ -16,6 +16,8 @@ project.pro
 # Temporary files
 tmp/
 
+# VIM etc.
+*.swp
 # Tool used to locate code tags
 tag_finder
 

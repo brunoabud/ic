@@ -1,5 +1,11 @@
 <RCC>
   <qresource prefix="icon">
+    <file alias="flow_arrow_down">raw/kdevelop_down(1).png</file>
+    <file alias="arrow_down2">raw/kdevelop_down.png</file>
+    <file alias="filter_in_arrow">raw/filter_in_arrow.png</file>
+    <file alias="filter_in_arrow2">raw/filter_in_arrow2.png</file>
+    <file alias="filter_out_arrow">raw/filter_out_arrow.png</file>
+    <file alias="filter_out_arrow2">raw/filter_out_arrow2.png</file>
     <file alias="console">raw/guake.png</file>
     <file alias="magnifying_glass">raw/kview.png</file>
     <file alias="close">raw/close.png</file>

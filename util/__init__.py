@@ -1,4 +1,4 @@
-def find_free_key(dictionary, start = 1):
+def find_free_key(dictionary, start=1):
     """Find the first int key available in the dictionary, starting from start.
     """
 

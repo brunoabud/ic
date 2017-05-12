@@ -1,5 +1,19 @@
+# coding: latin-1
+# Copyright (C) 2016 Bruno Abude Cardoso
+#
+# Imagem Cinemática is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Imagem Cinemática is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import logging
-log = logging.getLogger(__name__)
 
 from PyQt4.QtGui import QScrollArea, QDial, QSlider, QScrollBar, QBoxLayout
 from PyQt4.QtGui import QWidget, QLabel
@@ -8,7 +22,7 @@ from PyQt4.QtCore import Qt
 from application import get_app
 from gui import tr
 
-# This Module contains the GUI_INTERFACE class
+LOG = logging.getLogger(__name__)
 
 SLDR_TYPE_HSlider    = 0x1
 SLDR_TYPE_VSlider    = 0x2
@@ -16,8 +30,9 @@ SLDR_TYPE_Dial       = 0x3
 SLDR_TYPE_HScrollbar = 0x4
 SLDR_TYPE_VScrollbar = 0x5
 
-# Create a slider of the given type, with the given range and value
 def create_slider(slider_type, slider_range,  slider_default):
+    """Create a QSlider of the given type, with the given range and value.
+    """
     # Horizontal Slider
     if slider_type == SLDR_TYPE_HSlider:
         slider = QSlider(Qt.Horizontal)
@@ -49,35 +64,21 @@ class IntParam(object):
     ses it value through the `value` member.
 
     """
-
     def __init__(self, show_title, value_range,  default_value, slider_type, adjust_function):
         # The parent widget
-        widget = QWidget();
-        # Create a slider using based on the type provided
+        widget = QWidget()
         slider = create_slider(slider_type, value_range, default_value)
-        # Create the labels that will hold the title and the current value
-        title  = QLabel(str(show_title));
+        title  = QLabel(str(show_title))
         value  = QLabel(str(default_value))
-
-        # Center the text of the title label
         title.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         title.setWordWrap(True)
-
-        # Center the text of the value label
         value.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-
-        # Create and set a new Vertical BoxLayout
         widget.setLayout(QBoxLayout(QBoxLayout.TopToBottom))
-
-        # Inserts the widget into the layout
         widget.layout().addWidget(title , 1)
         widget.layout().addWidget(slider, 2)
         widget.layout().addWidget(value , 1)
-
-        # Remove the vertical spacing
         widget.layout().setSpacing(0)
 
-        # A function that will clip the value to the range
         def clip(v):
             v = max(v, value_range[0])
             v = min(v, value_range[1])
@@ -183,17 +184,17 @@ class GUI_Interface(object):
 
     def int_parameter(self, default_value, value_range, title, slider_type = SLDR_TYPE_HSlider, adjust_func = None):
         """Create an return IntParameter object and add to the GUI.
-
-        title          : title that will be showed to the user
-        value_range    : a tuple containing (min, max) values
-        default_value  : the default value of the parameter
-        adjust_func    : if provided, the adjust_func will be called to adjust
-                       : the value choosen by the user. this may be necessary
-                       : for parameters that need to have some specific values.
-                       : the adjust_func will be called with the users value as
-                       : its argument and it should return the adjusted value.
-        slider_type    : the type of the widget that will be used. should be
-                       : an item from the GUIInterface.SliderType Enum
+        Args:
+          title (str): title that will be showed to the user
+          value_range (int, int): a tuple containing (min, max) values
+          default_value (int): the default value of the parameter
+          adjust_func (function): if provided, the adjust_func will be called to adjust
+            the value choosen by the user. this may be necessary
+            for parameters that need to have some specific values.
+            the adjust_func will be called with the users value as
+            its argument and it should return the adjusted value.
+          slider_type (int): the type of the widget that will be used. should be
+            an item from the GUIInterface.SliderType Enum
         """
 
         param = IntParam(title, value_range, default_value, slider_type, adjust_func)
@@ -267,4 +268,4 @@ class GUI_Interface(object):
             try:
                 param._title.setText(tr("GUI_Interface", param._native_title))
             except:
-                log.error("", exc_info=True)
+                LOG.error("", exc_info=True)
