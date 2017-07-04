@@ -1,0 +1,39 @@
+<RCC>
+  <qresource prefix="icon">
+    <file alias="select_filter_page">raw/document.png</file>
+    <file alias="arrow_left">raw/arrow_left.png</file>
+    <file alias="arrow_right">raw/arrow_right.png</file>
+    <file alias="add_filter">raw/plus.png</file>
+    <file alias="new_canvas">raw/screen_4to3_32.png</file>
+    <file alias="close_canvas">raw/button_cancel.png</file>
+    <file alias="duplicate_canvas">raw/application_double.png</file>
+    <file alias="record">raw/recordpressed.png</file>
+    <file alias="stop_black">raw/button_black_stop.png</file>
+    <file alias="target">raw/target_icon.png</file>
+    <file alias="flow_arrow_down">raw/kdevelop_down(1).png</file>
+    <file alias="arrow_down2">raw/kdevelop_down.png</file>
+    <file alias="filter_in_arrow">raw/filter_in_arrow.png</file>
+    <file alias="filter_in_arrow2">raw/filter_in_arrow2.png</file>
+    <file alias="filter_out_arrow">raw/filter_out_arrow.png</file>
+    <file alias="filter_out_arrow2">raw/filter_out_arrow2.png</file>
+    <file alias="console">raw/guake.png</file>
+    <file alias="magnifying_glass">raw/kview.png</file>
+    <file alias="close">raw/close.png</file>
+    <file alias="exit">raw/exit.png</file>
+    <file alias="new_document">raw/new_document.png</file>
+    <file alias="add">raw/add.png</file>
+    <file alias="no">raw/no.png</file>
+    <file alias="up">raw/up.png</file>
+    <file alias="down">raw/down.png</file>
+    <file alias="arrowdown">raw/icon_arrowdown.png</file>
+    <file alias="load">raw/icon_load.png</file>
+    <file alias="pause">raw/icon_pause.png</file>
+    <file alias="play">raw/icon_play.png</file>
+    <file alias="delete">raw/icon_delete.png</file>
+    <file alias="refresh">raw/icon_refresh.png</file>
+  </qresource>
+  <qresource prefix="style">
+    <file alias="filter_ui_error">styles/filter_ui_error.qss</file>
+    <file alias="filter_ui_ok">styles/filter_ui_ok.qss</file>
+  </qresource>
+</RCC>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ViewCanvas</class>
+ <widget class="QMainWindow" name="ViewCanvas">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Imagem Cinemática - Canvas [Raw]</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="ResizablePixmapLabel" name="lbl_frame">
+      <property name="styleSheet">
+       <string notr="true">background-color:black;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="tool_bar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <property name="floatable">
+    <bool>true</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actn_change_target"/>
+   <addaction name="separator"/>
+   <addaction name="actn_freeze_frame"/>
+   <addaction name="separator"/>
+   <addaction name="actn_record_canvas"/>
+   <addaction name="separator"/>
+   <addaction name="actn_duplicate_canvas"/>
+  </widget>
+  <action name="actn_change_target">
+   <property name="icon">
+    <iconset resource="../qrc/ic_resources.qrc">
+     <normaloff>:/icon/target</normaloff>:/icon/target</iconset>
+   </property>
+   <property name="text">
+    <string>Change Target</string>
+   </property>
+   <property name="toolTip">
+    <string>Change the preview target for this Canvas</string>
+   </property>
+  </action>
+  <action name="actn_freeze_frame">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../qrc/ic_resources.qrc">
+     <normaloff>:/icon/stop_black</normaloff>:/icon/stop_black</iconset>
+   </property>
+   <property name="text">
+    <string>Freeze the current frame</string>
+   </property>
+   <property name="toolTip">
+    <string>Prevents the canvas from updating the current frame</string>
+   </property>
+  </action>
+  <action name="actn_duplicate_canvas">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../qrc/ic_resources.qrc">
+     <normaloff>:/icon/duplicate_canvas</normaloff>:/icon/duplicate_canvas</iconset>
+   </property>
+   <property name="text">
+    <string>Duplicate Canvas</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new canvas with the same options as this one</string>
+   </property>
+  </action>
+  <action name="actn_record_canvas">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../qrc/ic_resources.qrc">
+     <normaloff>:/icon/record</normaloff>:/icon/record</iconset>
+   </property>
+   <property name="text">
+    <string>Record</string>
+   </property>
+   <property name="toolTip">
+    <string>Record the frames viewed by this canvas and save it to a file</string>
+   </property>
+  </action>
+  <action name="actn_close_canvas">
+   <property name="icon">
+    <iconset resource="../qrc/ic_resources.qrc">
+     <normaloff>:/icon/close_canvas</normaloff>:/icon/close_canvas</iconset>
+   </property>
+   <property name="text">
+    <string>Close Canvas</string>
+   </property>
+   <property name="toolTip">
+    <string>Close the canvas</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ResizablePixmapLabel</class>
+   <extends>QLabel</extends>
+   <header>gui.resizable_pixmap_label</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../qrc/ic_resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

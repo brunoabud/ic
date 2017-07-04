@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>807</width>
+    <height>583</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="1">
+    <widget class="QFrame" name="frm_charts">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="charts_placeholder">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="text">
+         <string>Charts Placeholder</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="tabPosition">
+      <enum>QTabWidget::East</enum>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab_export_tables">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <attribute name="title">
+       <string>Export</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Export Tables</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Tables</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="cb_table_export_horizontal">
+            <property name="text">
+             <string>Horizontal</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="cb_table_export_vertical">
+            <property name="text">
+             <string>Vertical</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QComboBox" name="cb_export_table_type">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>csv</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QPushButton" name="pb_export_tables">
+            <property name="text">
+             <string>Export</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>200</width>
+           <height>398</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Plot</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pb_export_plot">
+            <property name="text">
+             <string>Export</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_plot_visualization">
+      <attribute name="title">
+       <string>Plot Visualization</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Plot Visualization</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="2" column="0" colspan="4">
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>1</width>
+           <height>345</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Vertical</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="cb_horizontal_marker"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Horizontal</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="cb_vertical_marker">
+         <item>
+          <property name="text">
+           <string>Pixel</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/,</normaloff>:/plot_icons/,</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Point</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/point</normaloff>:/plot_icons/point</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Star</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/*</normaloff>:/plot_icons/*</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Triangle Down</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/1</normaloff>:/plot_icons/1</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Triangle Up</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/2</normaloff>:/plot_icons/2</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Triangle Left</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/3</normaloff>:/plot_icons/3</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Triangle Right</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/4</normaloff>:/plot_icons/4</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>H Line</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/_</normaloff>:/plot_icons/_</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>V Line</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/|</normaloff>:/plot_icons/|</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>X</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/x</normaloff>:/plot_icons/x</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Circle</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/o</normaloff>:/plot_icons/o</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Triangle Left</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/&lt;</normaloff>:/plot_icons/&lt;</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Triangle Right</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/&gt;</normaloff>:/plot_icons/&gt;</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Triangle Up</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/^</normaloff>:/plot_icons/^</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Triangle Down</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/v</normaloff>:/plot_icons/v</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Square</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/s</normaloff>:/plot_icons/s</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Diamond</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/d</normaloff>:/plot_icons/d</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Pentagon</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/p</normaloff>:/plot_icons/p</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hexagon</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/H</normaloff>:/plot_icons/H</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Octagon</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../res/framesub_resources.qrc">
+            <normaloff>:/plot_icons/8</normaloff>:/plot_icons/8</iconset>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QDoubleSpinBox" name="spb_horizontal_marker">
+         <property name="minimum">
+          <double>0.500000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>10.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.500000000000000</double>
+         </property>
+         <property name="value">
+          <double>5.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QDoubleSpinBox" name="spb_vertical_marker">
+         <property name="minimum">
+          <double>0.500000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>10.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.500000000000000</double>
+         </property>
+         <property name="value">
+          <double>5.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_plot_options">
+      <attribute name="title">
+       <string>Plot Options</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Plot Options</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_8">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="cb_separate_charts">
+         <property name="text">
+          <string>Separate Charts</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="pb_clear">
+         <property name="text">
+          <string>Clear Plot</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>1</width>
+           <height>447</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+      <zorder>verticalSpacer_5</zorder>
+      <zorder>pb_clear</zorder>
+      <zorder>cb_separate_charts</zorder>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../res/framesub_resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
