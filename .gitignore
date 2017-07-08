@@ -21,3 +21,6 @@ tag_finder
 
 # Annotations and etc
 notes/
+
+# VIM SWAP files
+*.swp

@@ -30,7 +30,7 @@ FILTER_PAGES = {
                 "Pre-Filter": {"in": "BGR", "out": "GRAY", "filters": ["ICBGR2GRAY", "ICGrayBlurFilter"]},
                 "Threshold": {"in": "GRAY", "out": "GRAY", "filters": ["ICGrayBlurFilter", "ICAdaptiveThreshold"]},
                 "Post-Filter": {"in": "GRAY", "out": "GRAY", "filters": ["ICGrayBlurFilter"]},
-                "Dilatation": {"in": "GRAY", "out": "GRAY", "filters": ["ICDilateFilter"]}
+                "Dilatation": {"in": "GRAY", "out": "BGR", "filters": ["ICDilateFilter", "ICGRAY2BGR"]}
                }
 def main(**kwargs):
     return ICFrameSubtraction(plugin_path=kwargs["plugin_path"])
