@@ -30,6 +30,8 @@ import sys
 import logging
 import os
 
+from PyQt4.QtGui import QApplication
+from PyQt4.QtCore import Qt
 from ic import log as ic_log
 
 LOG = None
@@ -65,8 +67,12 @@ def main():
     app = application.Application(sys.argv)
     messages.start_timer()
     mainwindow = main_window.MainWindow()
+    desktop = QApplication.desktop().screen()
     mainwindow.show()
-
+    mainwindow.move(mainwindow.frameGeometry().left()-mainwindow.geometry().left(), 0)
+    mainwindow.resize(desktop.frameGeometry().width(), 150)
+    bordas = mainwindow.frameGeometry().width() - mainwindow.geometry().width()
+    mainwindow.filter_rack_window.move(0, mainwindow.frameGeometry().bottom())
     app.exec_()
 if __name__ == "__main__":
     create_logger()

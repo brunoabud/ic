@@ -11,10 +11,16 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Imagem Cinemática</string>
@@ -190,29 +196,6 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu_preview">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="title">
-     <string>Preview</string>
-    </property>
-    <widget class="QMenu" name="menu_preview_source">
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="tearOffEnabled">
-      <bool>false</bool>
-     </property>
-     <property name="title">
-      <string>Preview source</string>
-     </property>
-     <addaction name="actn_raw"/>
-     <addaction name="actn_filter_page"/>
-     <addaction name="actn_post_analysis"/>
-    </widget>
-    <addaction name="menu_preview_source"/>
-   </widget>
    <widget class="QMenu" name="menu_video">
     <property name="enabled">
      <bool>true</bool>
@@ -236,6 +219,9 @@
     <addaction name="actn_exit"/>
    </widget>
    <widget class="QMenu" name="menu_lang">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="toolTip">
      <string notr="true"/>
     </property>
@@ -259,7 +245,6 @@
    </widget>
    <addaction name="menu_analysis"/>
    <addaction name="menu_video"/>
-   <addaction name="menu_preview"/>
    <addaction name="menu_lang"/>
   </widget>
   <widget class="QToolBar" name="toolbar">
@@ -439,6 +424,9 @@
     <bool>true</bool>
    </property>
    <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="text">
