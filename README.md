@@ -1,7 +1,7 @@
 
 # Imagem Cinemática
 
-**Imagem cinemática** é um projeto de Iniciação Científica atualmente em desenvolvimento pelo Orientando [Bruno Abude Cardoso][Bruno-Lattes], e por seu Orientador [Gustavo Voltani Von Atzingen][Gustavo-Lattes].  
+**Imagem cinemática** é um projeto de Iniciação Científica desenvolvido pelo Orientando [Bruno Abude Cardoso][Bruno-Lattes], e por seu Orientador [Gustavo Voltani Von Atzingen][Gustavo-Lattes].  
 
 ## Resumo  
 O projeto consiste na criação de um Software, desenvolvido na linguagem [Python](https://www.python.org/), para auxiliar em experimentos de Física Básica que envolvem a análise cinemática de objetos em movimento.
